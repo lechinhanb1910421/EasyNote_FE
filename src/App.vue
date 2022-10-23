@@ -1,6 +1,5 @@
 <script>
-export default {
-}
+export default {}
 </script>
 
 <template>
@@ -8,3 +7,5 @@ export default {
   <router-view name="mainBody"></router-view>
   <router-view name="footer"></router-view>
 </template>
+
+<style></style>

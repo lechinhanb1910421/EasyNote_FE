@@ -1,14 +1,25 @@
-<script src="../controllers/login.controller.js">
-</script>
+<script src="../controllers/signup.controller.js"></script>
 <template>
   <div style="position: relative; background-color: #a0e7e5">
     <h2 id="login_title">EverNote</h2>
     <div class="container" id="login_main">
       <div id="login_container" class="bg-light row text-center">
         <div class="col-12">
-          <h5>Log in to EverNote</h5>
+          <h5>Sign up for your account</h5>
         </div>
         <form ref="form" id="login_form" name="formName" @submit.prevent="submit">
+          <div class="col-12">
+            <div class="form-floating mb-3 login_inputs">
+              <input type="text" name="firstName" v-model="firstName" class="form-control" placeholder="First Name" />
+              <label for="firstName">First Name</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-floating mb-3 login_inputs">
+              <input type="text" name="lastName" v-model="lastName" class="form-control" placeholder="Last Name" />
+              <label for="lastName">Last Name</label>
+            </div>
+          </div>
           <div class="col-12">
             <div class="form-floating mb-3 login_inputs">
               <input type="email" name="email" v-model="email" class="form-control" placeholder="name@example.com" />
@@ -21,28 +32,15 @@
               <label for="password">Password</label>
             </div>
           </div>
-
-          <div id="error_box" class="mt-2"></div>
-
+        <div id="error_box" class="mt-2"></div>
           <div class="col-12">
-            <button type="submit" id="continue" form="login_form" class="btn">Continue</button>
+            <button type="submit" id="continue" form="login_form" class="btn">Sign up</button>
             <hr class="mt-4 m-auto" style="width: 90%" />
           </div>
         </form>
-
-        <div class="col-12 my-2">
-          <span id="or">Or</span>
-        </div>
-        <div class="col-12">
-          <button type="butto" id="gg_login" class="btn otherLogin"><span id="google_icon"></span>Continue with Google</button>
-          <hr class="mt-4 m-auto" style="width: 90%" />
-        </div>
         <div class="col-12 mt-3 mb-4">
-          <router-link to="/forgot">Can not log in ?</router-link>
-          <i class="fa-solid fa-circle mx-3" style="top: -2px; color: hsla(160, 100%, 37%, 1); font-size: 8px"></i>
-          <router-link to="/signup">Sign up for free </router-link>
+          <router-link to="/login">Already have an account? Log in</router-link>
         </div>
-        <!-- <button type="button" class="btn">Continue</button> -->
       </div>
     </div>
   </div>
@@ -113,46 +111,4 @@
   background-size: contain;
   background-repeat: no-repeat;
 }
-
-/* #login_container > h5 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 90%;
-} */
-/* #login_container > .otherLogin {
-  background-color: white;
-} */
-/* #login_container > .otherLogin:hover {
-  background-color: white;
-  box-shadow: rgba(20, 164, 183, 0.2) 5px 5px 5px 0;
-} */
-/* #continue {
-  top: 34%;
-} */
-/* #gg_login {
-  top: 57%;
-} */
-
-/* #login_container > #or {
-  position: absolute;
-  top: 49%;
-  left: 50%;
-  height: 45px;
-  border-radius: 0.4rem;
-  transform: translateX(-50%);
-} */
-/* #login_container > hr {
-  top: 39%;
-  width: 90%;
-  left: 5%;
-} */
-
-/* #login_form {
-  width: 80%;
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  transform: translateX(-50%);
-} */
 </style>

@@ -4,6 +4,7 @@ import Footer from '@/components/Footer.vue'
 import MainBody from '@/components/MainBody.vue'
 import Login from '@/components/Login.vue'
 import Forgot from '@/components/Forgot.vue'
+import Signup from '@/components/Signup.vue'
 
 const routes = [
   {
@@ -28,6 +29,13 @@ const routes = [
     components: {
       header: Header,
       mainBody: Forgot
+    }
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    components: {
+      mainBody: Signup
     }
   }
 ]

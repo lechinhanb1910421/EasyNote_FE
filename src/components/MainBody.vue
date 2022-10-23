@@ -1,8 +1,39 @@
 <script>
-export default {}
+import AccountService from '@/services/account.service'
+import router from '@/routers'
+export default {
+  data() {
+    return {
+      email: '',
+      name: ''
+    }
+  },
+  methods: {
+    async getUser() {
+      const token = localStorage.getItem('auth_token')
+      if (token) {
+        const token_user = await AccountService.getUser(token)
+        this.name = token_user.name
+        this.email = token_user.email
+      } else {
+        router.push('/login')
+      }
+    }
+  },
+  created() {
+    this.getUser()
+  },
+  updated() {
+    setTimeout(() => {
+      this.getUser
+    }, 1000)
+  }
+}
 </script>
 <template>
   <div class="container text-light" style="padding-top: 70px">
+    <h1>Hello {{ name }}</h1>
+    <h3>Your email address is: {{ email }}</h3>
     <p>
       What is Lorem Ipsum? Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
       been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and

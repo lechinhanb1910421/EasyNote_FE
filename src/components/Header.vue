@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios'
+import router from '@/routers'
 
 export default {
   props: {},
@@ -11,6 +12,10 @@ export default {
     }
   },
   methods: {
+    async logout() {
+      localStorage.removeItem('auth_token')
+      router.push('/login')
+    },
     async getQuote() {
       try {
         const result = await axios({
@@ -21,8 +26,15 @@ export default {
             maxLength: 70
           }
         })
-        this.fact = result.data.content
-        this.author = result.data.author
+          .then((response) => {
+            return response.data
+          })
+          .catch((error) => {
+            console.log(error)
+            return { content: 'There is no escape from the enemy who lives within', author: 'Collected' }
+          })
+        this.fact = result.content
+        this.author = result.author
       } catch (error) {
         console.log(error)
       }
@@ -49,7 +61,7 @@ export default {
         <i class="fa-solid fa-bars" style="font-size: 23px"></i>
       </button>
       <router-link to="/">
-        <span class="navbar-brand mb-0 h1">My TODO</span>
+        <span class="navbar-brand mb-0 h1">EverNote</span>
       </router-link>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -59,6 +71,11 @@ export default {
           <span class="text-dark text-center fw-semibold fst-italic" style="width: 800px; font-size: 18px"
             >"{{ fact }}" - {{ author }}</span
           >
+        </ul>
+        <ul class="navbar-nav me-end mb-2 mb-lg-0">
+          <li class="pe-2">
+            <button class="btn btn-primary" @click="logout">Logout</button>
+          </li>
         </ul>
         <ul class="navbar-nav me-end mb-2 mb-lg-0">
           <li class="pe-2">
