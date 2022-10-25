@@ -1,7 +1,11 @@
 import AccountService from '@/services/account.service'
 import router from '@/routers'
+import { useUserStore } from '@/stores/user'
 export default {
-  props: {},
+  setup() {
+    const useUser = useUserStore()
+    return { useUser }
+  },
   data() {
     return {
       email: '',
@@ -27,10 +31,10 @@ export default {
           localStorage.setItem('auth_token', result.token)
           setTimeout(() => {
             router.push('/')
-          }, 1000)
+          }, 200)
         } else throw error
       } catch (error) {
-        if (error.response.data.message) {
+        if (error.response) {
           this.showErrorBox(error.response.data.message)
         }
         console.log(error)

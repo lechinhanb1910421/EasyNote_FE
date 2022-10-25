@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import MainBody from '@/components/MainBody.vue'
+import HomePage from '@/components/HomePage.vue'
 import Login from '@/components/Login.vue'
 import Forgot from '@/components/Forgot.vue'
 import Signup from '@/components/Signup.vue'
@@ -12,7 +12,7 @@ const routes = [
     name: 'home',
     components: {
       header: Header,
-      mainBody: MainBody,
+      mainBody: HomePage,
       footer: Footer
     }
   },

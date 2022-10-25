@@ -1,20 +1,44 @@
 <script>
 import axios from 'axios'
 import router from '@/routers'
+import { useUserStore } from '@/stores/user'
+import AccountService from '@/services/account.service'
 
 export default {
+  setup() {
+    const userStore = useUserStore()
+    return {
+      userStore
+    }
+  },
   props: {},
   data() {
     return {
       fact: '',
       author: '',
-      profilePic: 'src/assets/imgs/default_user.jpg'
+      profilePic: ''
     }
   },
   methods: {
     async logout() {
       localStorage.removeItem('auth_token')
+      this.userStore.logout()
       router.push('/login')
+    },
+    async getUser() {
+      const token = localStorage.getItem('auth_token')
+      try {
+        if (token) {
+          const token_user = await AccountService.getUser(token)
+          this.userStore.saveUser(token_user.name, token_user.email, token_user.profilePic)
+          console.log(this.userStore.user)
+        } else {
+          router.push('/login')
+        }
+      } catch (error) {
+        console.log(error)
+        router.push('/login')
+      }
     },
     async getQuote() {
       try {
@@ -40,11 +64,13 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getQuote()
+  async created() {
+    await this.getUser()
+    await this.getQuote()
     setInterval(() => {
       this.getQuote()
     }, 20000)
+    this.profilePic = this.userStore.user.profilePic
   }
 }
 </script>
@@ -68,14 +94,24 @@ export default {
           <li class="nav-item"></li>
         </ul>
         <ul class="navbar-nav me-auto">
-          <span class="text-dark text-center fw-semibold fst-italic" style="width: 800px; font-size: 18px"
-            >"{{ fact }}" - {{ author }}</span
-          >
+          <li>
+            <span class="text-dark text-center fw-semibold fst-italic" style="width: 800px; font-size: 18px">"{{ fact }}" - {{ author }}</span>
+          </li>
         </ul>
         <ul class="navbar-nav me-end mb-2 mb-lg-0">
           <li class="pe-2">
             <button class="btn btn-primary" @click="logout">Logout</button>
           </li>
+        </ul>
+        <ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
         </ul>
         <ul class="navbar-nav me-end mb-2 mb-lg-0">
           <li class="pe-2">
@@ -94,14 +130,9 @@ export default {
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-      <div>
-        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists,
-        etc.
-      </div>
+      <div>Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.</div>
       <div class="dropdown mt-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          Dropdown button
-        </button>
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Dropdown button</button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">Action</a></li>
           <li><a class="dropdown-item" href="#">Another action</a></li>

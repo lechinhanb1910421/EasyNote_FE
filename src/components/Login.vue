@@ -1,5 +1,4 @@
-<script src="../controllers/login.controller.js">
-</script>
+<script src="../controllers/login.controller.js"></script>
 <template>
   <div style="position: relative; background-color: #a0e7e5">
     <h2 id="login_title">EverNote</h2>
@@ -8,7 +7,7 @@
         <div class="col-12">
           <h5>Log in to EverNote</h5>
         </div>
-        <form ref="form" id="login_form" name="formName" @submit.prevent="submit">
+        <form id="login_form" name="formName" @submit.prevent="submit">
           <div class="col-12">
             <div class="form-floating mb-3 login_inputs">
               <input type="email" name="email" v-model="email" class="form-control" placeholder="name@example.com" />
@@ -114,45 +113,6 @@
   background-repeat: no-repeat;
 }
 
-/* #login_container > h5 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 90%;
-} */
-/* #login_container > .otherLogin {
-  background-color: white;
-} */
-/* #login_container > .otherLogin:hover {
-  background-color: white;
-  box-shadow: rgba(20, 164, 183, 0.2) 5px 5px 5px 0;
-} */
-/* #continue {
-  top: 34%;
-} */
-/* #gg_login {
-  top: 57%;
-} */
 
-/* #login_container > #or {
-  position: absolute;
-  top: 49%;
-  left: 50%;
-  height: 45px;
-  border-radius: 0.4rem;
-  transform: translateX(-50%);
-} */
-/* #login_container > hr {
-  top: 39%;
-  width: 90%;
-  left: 5%;
-} */
 
-/* #login_form {
-  width: 80%;
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  transform: translateX(-50%);
-} */
 </style>

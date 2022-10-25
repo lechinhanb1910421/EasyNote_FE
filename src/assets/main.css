@@ -6,6 +6,6 @@ a {
   transition: 0.4s;
 }
 body {
-  background-color: var(--color-background);
+  background-color: #CDF0EA
   /* overflow: scroll; */
 }

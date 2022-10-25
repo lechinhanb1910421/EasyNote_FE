@@ -14,20 +14,8 @@ class AccountService {
   }
   async getUser(token) {
     try {
-      await this.api.interceptors.request.use(
-        (config) => {
-          config.headers['auth_token'] = token
-          return config
-        },
-        (error) => {
-          return Promise.reject(error)
-        }
-      )
-      return (await this.api.get('/user')).data
+      return (await this.api.get('/user', { params: { auth_token: token } })).data
     } catch (error) {}
-  }
-  async create(payload) {
-    return (await this.api.post('/register', payload)).data
   }
 }
 
