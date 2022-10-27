@@ -66,8 +66,14 @@ export default {
               <div class="col-12"></div>
             </div>
             <div class="row">
-              <LogInContainer v-if="anchor == 'login'" @child-call="onClickChild"></LogInContainer>
-              <SignUpContainer v-if="anchor == 'signup'" @account-created="accountCreated"></SignUpContainer>
+              <Transition name="slide-up" mode="out-in">
+                <div v-if="anchor == 'login'">
+                  <LogInContainer @child-call="onClickChild"></LogInContainer>
+                </div>
+                <div v-else-if="anchor == 'signup'">
+                  <SignUpContainer @account-created="accountCreated"></SignUpContainer>
+                </div>
+              </Transition>
             </div>
           </div>
         </div>
@@ -132,5 +138,20 @@ label {
 .btn-outline-light:hover {
   color: black;
   background-color: rgb(220, 220, 220);
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
 }
 </style>

@@ -103,12 +103,42 @@ export default {
           <li>
             <div class="dropdown">
               <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
-              <ul class="dropdown-menu dropdown-menu-end" style="width: 300px" id="profileDropdown">
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <ul class="dropdown-menu dropdown-menu-end" style="width: 350px; border-radius: 0.75rem" id="profileDropdown">
+                <li>
+                  <button class="dropdown-item profile_myprofile" type="button">
+                    <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
+                    <span class="profile_userName">{{ userStore.user.name }} </span>
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item profile_btn" type="button">
+                    <span class="icon_cover">
+                      <i class="fa-solid fa-gear profile_icon"></i>
+                    </span>
+                    <span class="profile_span">Settings </span>
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item profile_btn" type="button">
+                    <span class="icon_cover">
+                      <i class="fa-solid fa-circle-question profile_icon"></i>
+                    </span>
+                    <span class="profile_span">Help </span>
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item profile_btn" type="button">
+                    <span class="icon_cover">
+                      <i class="fa-solid fa-message profile_icon"></i>
+                    </span>
+                    <span class="profile_span">Send Feedbacks </span>
+                  </button>
+                </li>
                 <li>
                   <button class="dropdown-item profile_btn" type="button" @click="logout">
-                    <i class="fa-solid fa-right-from-bracket profile_icon" style="padding-right: 10px"></i>
+                    <span class="icon_cover">
+                      <i class="fa-solid fa-right-from-bracket profile_icon"></i>
+                    </span>
                     <span class="profile_span">Log Out </span>
                   </button>
                 </li>
@@ -122,37 +152,42 @@ export default {
       </div>
     </div>
   </nav>
-
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div>Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.</div>
-      <div class="dropdown mt-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Dropdown button</button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </template>
 
 <style scoped>
+.profile_myprofile {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  background-color: rgb(240, 240, 240);
+  box-shadow: rgb(0 0 0 / 20%) 2px 2px 6px 0;
+}
 .profile_btn {
   display: flex;
   align-items: center;
   height: 45px;
+  margin-bottom: 5px;
 }
 .profile_icon {
-  font-size: 22px;
+  /* padding-left: 7px; */
+  font-size: 24px;
+}
+.icon_cover {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(220, 220, 220);
+  padding: 7px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+.profile_userName {
+  margin-left: 15px;
+  font-weight: bold;
 }
 .profile_span {
-  margin-left: 5px;
+  font-weight: 500;
+  /* margin-left: 5px; */
 }
 #profileDropdown li {
   padding-left: 15px;

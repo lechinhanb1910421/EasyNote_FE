@@ -2,8 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import Forgot from '@/components/Forgot.vue'
-import Signup from '@/components/Signup.vue'
-import HomePage from '@/views/HomePage.vue'
+import DashBoard from '@/views/DashBoard.vue'
 import LoginPage from '@/views/LoginPage.vue'
 
 const routes = [
@@ -12,7 +11,7 @@ const routes = [
     name: 'home',
     components: {
       header: Header,
-      mainBody: HomePage
+      mainBody: DashBoard
     }
   },
   {
@@ -27,13 +26,6 @@ const routes = [
     name: 'forgot',
     components: {
       header: Header
-    }
-  },
-  {
-    path: '/signup',
-    name: 'signup',
-    components: {
-      mainBody: Signup
     }
   }
 ]
