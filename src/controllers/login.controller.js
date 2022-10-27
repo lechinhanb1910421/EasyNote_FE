@@ -2,10 +2,10 @@ import AccountService from '@/services/account.service'
 import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 export default {
-  setup() {
-    const useUser = useUserStore()
-    return { useUser }
+  emits: {
+    childCall: null
   },
+
   data() {
     return {
       email: '',
@@ -18,8 +18,12 @@ export default {
         '<div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 80%">' +
         error +
         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+      $('#error_box').fadeIn()
       $('#error_box').html('')
       $('#error_box').append(box)
+    },
+    hideErrorBox() {
+      $('#error_box').fadeOut()
     },
     async submit() {
       try {
@@ -39,7 +43,11 @@ export default {
         }
         console.log(error)
       }
+    },
+    async googleClick(event) {
+      this.$emit('childCall', 'Hello, please use this function later. Hehe')
     }
   },
-  async created() {}
+  async created() {},
+  updated() {}
 }

@@ -17,6 +17,9 @@ class AccountService {
       return (await this.api.get('/user', { params: { auth_token: token } })).data
     } catch (error) {}
   }
+  async createAccount(payload) {
+    return (await this.api.post('/register', payload)).data
+  }
 }
 
 export default new AccountService()

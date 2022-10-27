@@ -1,10 +1,10 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import HomePage from '@/components/HomePage.vue'
-import Login from '@/components/Login.vue'
 import Forgot from '@/components/Forgot.vue'
 import Signup from '@/components/Signup.vue'
+import HomePage from '@/views/HomePage.vue'
+import LoginPage from '@/views/LoginPage.vue'
 
 const routes = [
   {
@@ -12,23 +12,21 @@ const routes = [
     name: 'home',
     components: {
       header: Header,
-      mainBody: HomePage,
-      footer: Footer
+      mainBody: HomePage
     }
   },
   {
     path: '/login',
     name: 'login',
     components: {
-      mainBody: Login
+      mainBody: LoginPage
     }
   },
   {
     path: '/forgot',
     name: 'forgot',
     components: {
-      header: Header,
-      mainBody: Forgot
+      header: Header
     }
   },
   {

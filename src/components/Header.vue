@@ -31,7 +31,7 @@ export default {
         if (token) {
           const token_user = await AccountService.getUser(token)
           this.userStore.saveUser(token_user.name, token_user.email, token_user.profilePic)
-          console.log(this.userStore.user)
+          console.table(this.userStore.user)
         } else {
           router.push('/login')
         }
@@ -98,27 +98,26 @@ export default {
             <span class="text-dark text-center fw-semibold fst-italic" style="width: 800px; font-size: 18px">"{{ fact }}" - {{ author }}</span>
           </li>
         </ul>
+
         <ul class="navbar-nav me-end mb-2 mb-lg-0">
-          <li class="pe-2">
-            <button class="btn btn-primary" @click="logout">Logout</button>
+          <li>
+            <div class="dropdown">
+              <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
+              <ul class="dropdown-menu dropdown-menu-end" style="width: 300px" id="profileDropdown">
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li>
+                  <button class="dropdown-item profile_btn" type="button" @click="logout">
+                    <i class="fa-solid fa-right-from-bracket profile_icon" style="padding-right: 10px"></i>
+                    <span class="profile_span">Log Out </span>
+                  </button>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
-        <ul>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </div>
-        </ul>
         <ul class="navbar-nav me-end mb-2 mb-lg-0">
-          <li class="pe-2">
-            <router-link to="/login">
-              <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" />
-            </router-link>
-          </li>
+          <li class="pe-2"></li>
         </ul>
       </div>
     </div>
@@ -143,4 +142,26 @@ export default {
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.profile_btn {
+  display: flex;
+  align-items: center;
+  height: 45px;
+}
+.profile_icon {
+  font-size: 22px;
+}
+.profile_span {
+  margin-left: 5px;
+}
+#profileDropdown li {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+#profileDropdown li button {
+  border-radius: 0.5rem;
+}
+#profileDropdown li button:hover {
+  background-color: rgb(230, 230, 230);
+}
+</style>

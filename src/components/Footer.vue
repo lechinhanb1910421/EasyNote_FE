@@ -4,7 +4,7 @@ export default {}
 <template>
   <footer class="text-center text-white" style="background-color: #4281a4">
     <div class="container">
-      <section class="mt-5">
+      <section>
         <div class="row text-center d-flex justify-content-center pt-5">
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
@@ -32,9 +32,7 @@ export default {}
       <span class="mb-5">
         <div class="row d-flex justify-content-center">
           <div class="col-lg-8 p-4">
-            <p style="font-size: 19px">
-              My TODO is a cost-free website which helps you manage all your tasks ever so effortlessly.
-            </p>
+            <p style="font-size: 19px">My TODO is a cost-free website which helps you manage all your tasks ever so effortlessly.</p>
           </div>
         </div>
       </span>
