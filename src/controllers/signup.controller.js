@@ -72,7 +72,8 @@ export default {
         const result = await AccountService.createAccount({
           email: this.email,
           password: this.password,
-          name: this.firstName + this.lastName
+          firstName: this.firstName,
+          lastName: this.lastName
         })
         if (confirm('Your account was created. Go to homepage?') == true) {
           try {

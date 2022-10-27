@@ -16,7 +16,8 @@ export default {
     return {
       fact: '',
       author: '',
-      profilePic: ''
+      profilePic: '',
+      userName: ''
     }
   },
   methods: {
@@ -30,10 +31,13 @@ export default {
       try {
         if (token) {
           const token_user = await AccountService.getUser(token)
-          this.userStore.saveUser(token_user.name, token_user.email, token_user.profilePic)
-          console.table(this.userStore.user)
+          if (token_user) {
+            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+          } else {
+            throw new Error('Can not get user with this token')
+          }
         } else {
-          router.push('/login')
+          throw new Error('There is valid no token')
         }
       } catch (error) {
         console.log(error)
@@ -71,6 +75,7 @@ export default {
       this.getQuote()
     }, 20000)
     this.profilePic = this.userStore.user.profilePic
+    this.userName = this.userStore.user.firstName + ' ' + this.userStore.user.lastName
   }
 }
 </script>
@@ -107,7 +112,7 @@ export default {
                 <li>
                   <button class="dropdown-item profile_myprofile" type="button">
                     <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
-                    <span class="profile_userName">{{ userStore.user.name }} </span>
+                    <span class="profile_userName">{{ userName }} </span>
                   </button>
                 </li>
                 <li>

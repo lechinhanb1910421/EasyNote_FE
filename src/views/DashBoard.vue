@@ -25,7 +25,7 @@ export default {
 </script>
 <template>
   <div class="container text-dark" style="padding-top: 70px; min-height: 100vh">
-    <h3>Hello {{ useUser.user.name }}</h3>
+    <h3>Hello {{ useUser.user.firstName + ' ' + useUser.user.lastName }}</h3>
     <h5>Your email address is: {{ useUser.user.email }}</h5>
     <div class="row text-center">
       <div class="col-4"><NoteTodo></NoteTodo></div>
