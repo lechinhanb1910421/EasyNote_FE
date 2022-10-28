@@ -2,10 +2,6 @@
 <template>
   <div>
     <h1 class="text-center">DONE</h1>
-    <h5>This contains Done notes fqwfqqwfqwffwqf</h5>
-    <h5>This contains Done notes</h5>
-    <h5>This contains Done notes</h5>
-    <h5>This contains Done notes</h5>
     <h5>This contains Done notes</h5>
   </div>
 </template>

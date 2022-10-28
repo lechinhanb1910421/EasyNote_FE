@@ -19,12 +19,19 @@ export default {
     <h1 class="text-center">TODO</h1>
   </div>
   <button class="dropdown-item profile_myprofile" type="button">
-    <img src="../assets/imgs/Everett.png" alt="..." width="40" height="40" class="rounded-circle" />
     <div style="float: left; clear: left">
       <span class="profile_userName">Title: {{ userStore.user.firstName + ' ' + userStore.user.lastName }}</span>
       <span class="profile_userEmail">Author: {{ userStore.user.email }}</span>
     </div>
   </button>
+  <div v-for="item in userStore.notes">
+    <button class="dropdown-item profile_myprofile" type="button">
+      <div style="float: left; clear: left">
+        <span class="profile_userName">Title: {{ item.title }}</span>
+        <span class="profile_userEmail">Description: {{ item.description }}</span>
+      </div>
+    </button>
+  </div>
 </template>
 <style scoped>
 .profile_myprofile {
@@ -39,10 +46,13 @@ export default {
 }
 .profile_userEmail {
   font-size: 14px;
+  width: 320px;
   margin-left: 15px;
   font-weight: 400;
   float: left;
   clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .profile_userName {
   font-size: 17px;

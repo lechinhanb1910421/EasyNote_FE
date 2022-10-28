@@ -28,12 +28,7 @@ export default {
     return {
       profilePic: '',
       userName: '',
-      user: {
-        firstName: null,
-        lastName: null,
-        email: null,
-        profilePic: null
-      }
+      notes: {}
     }
   },
   methods: {
@@ -44,6 +39,7 @@ export default {
           const token_user = await AccountService.getUser(token)
           if (token_user) {
             this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+            this.userStore.getUserNotes(token_user.email)
           } else {
             throw new Error('Can not get user with this token')
           }

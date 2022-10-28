@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import AccountService from '@/services/account.service'
+import NoteService from '@/services/note.service'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -7,9 +8,9 @@ export const useUserStore = defineStore('user', {
       firstName: null,
       lastName: null,
       email: null,
-      profilePic: null,
-      notes: []
+      profilePic: null
     },
+    notes: [],
     signupForm: {
       firstName: null,
       lastName: null,
@@ -36,6 +37,9 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = token_user.lastName
       this.user.email = token_user.email
       this.user.profilePic = token_user.profilePic
+    },
+    async getUserNotes(email) {
+      this.notes = await NoteService.getUserNotes(email)
     },
     getUserFullName() {
       return this.user.firstName + ' ' + this.user.lastName
