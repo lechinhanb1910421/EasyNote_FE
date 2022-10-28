@@ -1,10 +1,14 @@
 import AccountService from '@/services/account.service'
 import router from '@/routers'
+import CustomModal from '@/components/CustomModal.vue'
 import { useUserStore } from '@/stores/user'
 
 export default {
   emits: {
     accountCreated: null
+  },
+  components: {
+    CustomModal
   },
   setup() {
     const userStore = useUserStore()
@@ -19,7 +23,8 @@ export default {
       password: '',
       confirmPassword: '',
       lastName: '',
-      firstName: ''
+      firstName: '',
+      userName: ''
     }
   },
   methods: {
@@ -67,6 +72,26 @@ export default {
       }
       return errors
     },
+    async logInAndGoHome() {
+      this.hideConfirmModal()
+      try {
+        const result = await AccountService.login({
+          email: this.email,
+          password: this.password
+        })
+        if (result.message === 'Logged In') {
+          localStorage.setItem('auth_token', result.token)
+          setTimeout(() => {
+            router.push('/')
+          }, 200)
+        } else throw error
+      } catch (error) {
+        if (error.response) {
+          this.showErrorBox(error.response.data.message)
+        }
+        console.log(error)
+      }
+    },
     async createdAccount() {
       try {
         const result = await AccountService.createAccount({
@@ -75,31 +100,22 @@ export default {
           firstName: this.firstName,
           lastName: this.lastName
         })
-        if (confirm('Your account was created. Go to homepage?') == true) {
-          try {
-            const result = await AccountService.login({
-              email: this.email,
-              password: this.password
-            })
-            if (result.message === 'Logged In') {
-              localStorage.setItem('auth_token', result.token)
-              setTimeout(() => {
-                router.push('/')
-              }, 200)
-            } else throw error
-          } catch (error) {
-            if (error.response) {
-              this.showErrorBox(error.response.data.message)
-            }
-            console.log(error)
-          }
-        }
-        this.$emit('accountCreated', result)
+        this.userName = this.firstName + ' ' + this.lastName
       } catch (error) {
         if (error.response) {
           this.showErrorBox(error.response.data.message)
         }
       }
+    },
+    showConfirmModal() {
+      $(() => {
+        $('#myModal').modal('show')
+      })
+    },
+    hideConfirmModal() {
+      $(() => {
+        $('#myModal').modal('hide')
+      })
     },
     async submit() {
       var errors = await this.validateForm()
@@ -108,6 +124,7 @@ export default {
         this.showErrorBox(errMsg)
       } else {
         this.createdAccount()
+        this.showConfirmModal()
       }
     }
   },

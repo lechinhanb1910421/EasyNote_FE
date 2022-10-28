@@ -1,22 +1,25 @@
 <script>
+import MyFooter from '@/components/Footer.vue'
 import LogInContainer from '@/components/LogInContainer.vue'
 import SignUpContainer from '@/components/SignUpContainer.vue'
 import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 export default {
+  components: {
+    LogInContainer,
+    SignUpContainer,
+    MyFooter
+  },
   setup() {
     const userStore = useUserStore()
     return {
       userStore
     }
   },
-  components: {
-    LogInContainer,
-    SignUpContainer
-  },
   data() {
     return {
-      anchor: 'login'
+      anchor: 'login',
+      userName: ''
     }
   },
   methods: {
@@ -31,7 +34,9 @@ export default {
     },
     accountCreated(payload) {
       this.anchor = 'login'
-    }
+      this.userName = payload.account.firstName + ' ' + payload.account.lastName
+    },
+
   },
   created() {
     if (this.userStore.user.email) {
@@ -80,6 +85,8 @@ export default {
       </div>
     </div>
   </div>
+
+  <MyFooter></MyFooter>
 </template>
 
 <style scoped>
@@ -142,7 +149,7 @@ label {
 
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.3s ease-out;
+  transition: all 0.2s ease-out;
 }
 
 .slide-up-enter-from {

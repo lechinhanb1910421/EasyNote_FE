@@ -44,6 +44,7 @@
       <button type="submit" id="continue" form="login_form" class="btn">Sign Up</button>
     </div>
   </form>
+  <CustomModal :name="userName" @go-home="logInAndGoHome"></CustomModal>
 </template>
 
 <style scoped>

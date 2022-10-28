@@ -11,13 +11,13 @@ export default {
       userStore
     }
   },
-  props: {},
   data() {
     return {
       fact: '',
       author: '',
       profilePic: '',
-      userName: ''
+      userName: '',
+      userEmail: ''
     }
   },
   methods: {
@@ -26,23 +26,10 @@ export default {
       this.userStore.logout()
       router.push('/login')
     },
-    async getUser() {
-      const token = localStorage.getItem('auth_token')
-      try {
-        if (token) {
-          const token_user = await AccountService.getUser(token)
-          if (token_user) {
-            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
-          } else {
-            throw new Error('Can not get user with this token')
-          }
-        } else {
-          throw new Error('There is valid no token')
-        }
-      } catch (error) {
-        console.log(error)
-        router.push('/login')
-      }
+    getUserInfo() {
+      this.userName = this.userStore.user.firstName + ' ' + this.userStore.user.lastName
+      this.userEmail = this.userStore.user.email
+      this.profilePic = this.userStore.user.profilePic
     },
     async getQuote() {
       try {
@@ -69,13 +56,11 @@ export default {
     }
   },
   async created() {
-    await this.getUser()
     await this.getQuote()
     setInterval(() => {
       this.getQuote()
     }, 20000)
-    this.profilePic = this.userStore.user.profilePic
-    this.userName = this.userStore.user.firstName + ' ' + this.userStore.user.lastName
+    this.getUserInfo()
   }
 }
 </script>
@@ -112,7 +97,10 @@ export default {
                 <li>
                   <button class="dropdown-item profile_myprofile" type="button">
                     <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
-                    <span class="profile_userName">{{ userName }} </span>
+                    <div style="float: left; clear: left">
+                      <span class="profile_userName">{{ userName }} </span>
+                      <span class="profile_userEmail">{{ userStore.user.email }}</span>
+                    </div>
                   </button>
                 </li>
                 <li>
@@ -175,7 +163,6 @@ export default {
   margin-bottom: 5px;
 }
 .profile_icon {
-  /* padding-left: 7px; */
   font-size: 24px;
 }
 .icon_cover {
@@ -186,13 +173,22 @@ export default {
   border-radius: 50%;
   margin-right: 20px;
 }
+.profile_userEmail {
+  font-size: 14px;
+  margin-left: 15px;
+  font-weight: 400;
+  float: left;
+  clear: left;
+}
 .profile_userName {
+  font-size: 17px;
   margin-left: 15px;
   font-weight: bold;
+  float: left;
+  clear: left;
 }
 .profile_span {
   font-weight: 500;
-  /* margin-left: 5px; */
 }
 #profileDropdown li {
   padding-left: 15px;

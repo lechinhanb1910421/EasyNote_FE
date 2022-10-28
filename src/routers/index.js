@@ -1,7 +1,4 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import Forgot from '@/components/Forgot.vue'
 import DashBoard from '@/views/DashBoard.vue'
 import LoginPage from '@/views/LoginPage.vue'
 
@@ -9,24 +6,12 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    components: {
-      header: Header,
-      mainBody: DashBoard
-    }
+    component: DashBoard
   },
   {
     path: '/login',
     name: 'login',
-    components: {
-      mainBody: LoginPage
-    }
-  },
-  {
-    path: '/forgot',
-    name: 'forgot',
-    components: {
-      header: Header
-    }
+    component: LoginPage
   }
 ]
 

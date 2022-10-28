@@ -33,7 +33,7 @@
     <hr class="mt-4 m-auto" style="width: 90%" />
   </div>
   <div class="col-12 mt-3 mb-4">
-    <router-link to="/forgot">Can not log in ?</router-link>
+    <router-link to="/login">Can not log in ?</router-link>
   </div>
 </template>
 

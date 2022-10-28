@@ -7,7 +7,8 @@ export const useUserStore = defineStore('user', {
       firstName: null,
       lastName: null,
       email: null,
-      profilePic: null
+      profilePic: null,
+      notes: []
     },
     signupForm: {
       firstName: null,
@@ -35,6 +36,12 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = token_user.lastName
       this.user.email = token_user.email
       this.user.profilePic = token_user.profilePic
+    },
+    getUserFullName() {
+      return this.user.firstName + ' ' + this.user.lastName
+    },
+    getUserProPic() {
+      return this.user.profilePic
     },
     async logout() {
       this.user.firstName = ''
