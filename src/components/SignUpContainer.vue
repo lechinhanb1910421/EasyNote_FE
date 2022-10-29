@@ -44,7 +44,7 @@
       <button type="submit" id="continue" form="login_form" class="btn">Sign Up</button>
     </div>
   </form>
-  <div class="modal fade" id="myModal" ref="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="signUpModal" ref="signUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">

@@ -99,7 +99,6 @@ export default {
           lastName: this.lastName
         })
         this.userName = result.account.firstName + ' ' + result.account.lastName
-        this.resetFormInfo()
         this.showConfirmModal()
       } catch (error) {
         if (error.response) {
@@ -118,12 +117,12 @@ export default {
     },
     showConfirmModal() {
       $(() => {
-        $('#myModal').modal('show')
+        $('#signUpModal').modal('show')
       })
     },
     hideConfirmModal() {
       $(() => {
-        $('#myModal').modal('hide')
+        $('#signUpModal').modal('hide')
       })
     },
     async submit() {
@@ -140,5 +139,9 @@ export default {
     this.password = ''
     this.confirmPassword = ''
   },
-  mounted() {}
+  mounted() {
+    // $('#signUpModal').on('show.bs.modal', function (e) {
+    //   this.$parent.resetFormInfo()
+    // })
+  }
 }

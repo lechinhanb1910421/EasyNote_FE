@@ -5,10 +5,24 @@ export default {
   components: {
     NotePanel
   },
+  props: ['noteTitle', 'noteDescrip'],
   setup() {
     const userStore = useUserStore()
     return {
       userStore
+    }
+  },
+  data() {
+    return {
+      detailTitle: '',
+      detailDescrip: ''
+    }
+  },
+  methods: {
+    showDetailNote(item) {
+      this.detailTitle = item.title
+      this.detailDescrip = item.description
+      $(this.$refs.detailNote).modal('show')
     }
   },
   mounted() {}
@@ -31,17 +45,22 @@ export default {
       </div>
     </button>
   </div>
-  <div v-for="item in userStore.notes">
-    <button class="noteSumary_ctn" type="button">
+  <div v-for="(item, idx) in userStore.notes">
+    <button class="noteSumary_ctn" type="button" @click="showDetailNote(item)">
       <div style="float: left; clear: left">
         <span class="noteSumary_title">Title: {{ item.title }}</span>
         <span class="noteSumary_des">Description: {{ item.description }}</span>
       </div>
     </button>
   </div>
-  <NotePanel></NotePanel>
+  <div class="modal fade modal-lg" id="detailNote" ref="detailNote" tabindex="-1" aria-labelledby="detailNoteTitle" aria-hidden="true">
+    <NotePanel :note-title="detailTitle" :note-descrip="detailDescrip"></NotePanel>
+  </div>
 </template>
 <style scoped>
+.modal-lg {
+  background-color: transparent;
+}
 .noteSumary_ctn {
   border: 1px solid rgb(221, 221, 221);
   height: 80px;
@@ -55,19 +74,21 @@ export default {
 }
 .noteSumary_title {
   text-align: left;
+  width: 320px;
   font-size: 17px;
   margin-left: 15px;
   font-weight: bold;
   float: left;
   clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .noteSumary_des {
   text-align: left;
   font-size: 14px;
   width: 300px;
-  height: 20px;
   margin-left: 15px;
-  font-weight: 400;
   float: left;
   clear: left;
   overflow: hidden;
