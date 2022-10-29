@@ -1,6 +1,7 @@
 <script>
 import { useUserStore } from '@/stores/user'
 import NotePanel from '@/components/NoteModal.vue'
+import NoteService from '@/services/note.service'
 export default {
   components: {
     NotePanel
@@ -15,14 +16,28 @@ export default {
   data() {
     return {
       detailTitle: '',
-      detailDescrip: ''
+      detailDescrip: '',
+      editNoteId: ''
     }
   },
   methods: {
-    showDetailNote(item) {
-      this.detailTitle = item.title
-      this.detailDescrip = item.description
+    showDetailNote(index) {
+      this.detailTitle = this.userStore.notes[index].title
+      this.detailDescrip = this.userStore.notes[index].description
+      this.editNoteId = this.userStore.notes[index]._id
       $(this.$refs.detailNote).modal('show')
+    },
+    async noteChanged(note) {
+      const payload = { note: note, id: this.editNoteId }
+      const result = await NoteService.editNote(payload)
+      try {
+        if (result.message) {
+          this.detailTitle = result.note.title
+          this.detailDescrip = result.note.description
+        }
+      } catch (error) {
+        console.log('can not change note', error)
+      }
     }
   },
   mounted() {}
@@ -46,7 +61,7 @@ export default {
     </button>
   </div>
   <div v-for="(item, idx) in userStore.notes">
-    <button class="noteSumary_ctn" type="button" @click="showDetailNote(item)">
+    <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
       <div style="float: left; clear: left">
         <span class="noteSumary_title">Title: {{ item.title }}</span>
         <span class="noteSumary_des">Description: {{ item.description }}</span>
@@ -54,7 +69,7 @@ export default {
     </button>
   </div>
   <div class="modal fade modal-lg" id="detailNote" ref="detailNote" tabindex="-1" aria-labelledby="detailNoteTitle" aria-hidden="true">
-    <NotePanel :note-title="detailTitle" :note-descrip="detailDescrip"></NotePanel>
+    <NotePanel :note-title="detailTitle" :note-descrip="detailDescrip" @note-changed="noteChanged" :noteId="editNoteId"></NotePanel>
   </div>
 </template>
 <style scoped>

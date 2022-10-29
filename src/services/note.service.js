@@ -11,6 +11,9 @@ class NoteService {
   async getUserNotes(email) {
     return (await this.api.get('/', { params: { email: email } })).data
   }
+  async editNote(payload) {
+    return (await this.api.put(`/${payload.id}`, { description: payload.note })).data
+  }
 }
 
 export default new NoteService()

@@ -28,7 +28,7 @@ export default {
     return {
       profilePic: '',
       userName: '',
-      notes: {}
+      notes: []
     }
   },
   methods: {
@@ -50,7 +50,7 @@ export default {
         console.log(error)
         router.push('/login')
       }
-    }
+    },
   },
   async created() {
     await this.getUser()

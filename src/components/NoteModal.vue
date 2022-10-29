@@ -1,10 +1,36 @@
 <script>
 export default {
-  props: {
-    noteTitle: String,
-    noteDescrip: String
+  props: ['noteTitle', 'noteDescrip'],
+  emits: {
+    noteChanged: null
   },
-  methods: {}
+  data() {
+    return {
+      isEditting: false,
+      editedNote: ''
+    }
+  },
+  methods: {
+    toggleEdit() {
+      this.editedNote = this.noteDescrip
+      this.isEditting = true
+    },
+    endEdit() {
+      this.isEditting = false
+    },
+    saveEditText() {
+      if (this.noteDescrip !== this.editedNote) {
+        this.$emit('noteChanged', this.editedNote)
+      }
+      this.isEditting = false
+    },
+    cancelEdit() {
+      this.isEditting = false
+    }
+  },
+  created() {
+    this.editedNote = this.noteDescrip
+  }
 }
 </script>
 <template>
@@ -15,40 +41,33 @@ export default {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <span class="desc_title"><i class="fa-solid fa-rectangle-list"></i> Description: </span>
-        <div class="editableDes">
-          <textarea name="descripDetail" id="descripDetail" cols="90" rows="5">{{ noteDescrip }}</textarea>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever
-            since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only
-            five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-            release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker
-            including versions of Lorem Ipsum.
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever
-            since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only
-            five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-            release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker
-            including versions of Lorem Ipsum.
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever
-            since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only
-            five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-            release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker
-            including versions of Lorem Ipsum.
-          </p>
+        <span class="desc_title">
+          <i class="fa-solid fa-rectangle-list"></i>
+          Description:
+          <button v-if="!isEditting" @click="toggleEdit" type="button" class="btn editNote_btn">Edit</button>
+        </span>
+        <p v-if="!isEditting" class="desc_detail" @click="toggleEdit">{{ noteDescrip }}</p>
+        <div v-if="isEditting">
+          <textarea class="desc_detail" name="noteEdit" ref="noteEdit" cols="100" rows="8" v-model.lazy="editedNote"></textarea>
+          <div class="desc_control_btns">
+            <button type="button" class="btn" @click="saveEditText">Save</button>
+            <button type="button" class="btn" @click="cancelEdit">Cancel</button>
+          </div>
         </div>
       </div>
-      <!-- <div class="modal-footer m-auto">
-        <button type="button" class="btn btn-success">Go to Dash Board now</button>
-      </div> -->
+      <div class="modal-footer m-auto">
+        <button type="button" class="btn btn-success">Some buttons go here</button>
+        <button type="button" class="btn btn-success">Some buttons go here</button>
+        <button type="button" class="btn btn-success">Some buttons go here</button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.modal-dialog {
+  width: 700px;
+}
 .modal-title {
   margin-left: 15px;
   font-size: 24px;
@@ -58,20 +77,56 @@ export default {
   height: 600px;
 }
 .modal-body {
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 .desc_title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
   font-size: 18px;
   font-weight: 500;
   padding-left: -10px;
 }
+.desc_detail {
+  width: 90%;
+  margin-left: 24px;
+  font-size: 16px;
+}
 .desc_title i {
   font-size: 24px;
-  margin-left: -10px;
-  margin-bottom: 14px;
+  padding-right: 7px;
+}
+textarea {
+  height: 300px;
+  resize: none;
+}
+.desc_control_btns {
+  margin-left: 15px;
+}
+.desc_control_btns button {
+  font-size: 16px;
+  height: 40px;
+  padding: 0;
+  font-weight: 500;
+  width: 100px;
+  margin-left: 10px;
+  background-color: rgb(200, 200, 200);
+}
+.desc_control_btns button:first-child {
+  background-color: #2192ff;
 }
 .editableDes {
   text-align: center;
+}
+.editNote_btn {
+  margin-left: 7px;
+  height: 35px;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: rgb(215, 215, 215);
 }
 </style>
