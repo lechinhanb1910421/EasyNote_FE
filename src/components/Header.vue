@@ -152,15 +152,16 @@ export default {
   height: 80px;
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   background-color: rgb(240, 240, 240);
   box-shadow: rgb(0 0 0 / 20%) 2px 2px 6px 0;
 }
 .profile_btn {
   display: flex;
   align-items: center;
-  height: 45px;
-  margin-bottom: 5px;
+  height: 50px;
+  margin-bottom: 10px;
 }
 .profile_icon {
   font-size: 24px;

@@ -1,14 +1,10 @@
 import AccountService from '@/services/account.service'
 import router from '@/routers'
-import CustomModal from '@/components/CustomModal.vue'
 import { useUserStore } from '@/stores/user'
 
 export default {
   emits: {
     accountCreated: null
-  },
-  components: {
-    CustomModal
   },
   setup() {
     const userStore = useUserStore()
@@ -24,7 +20,9 @@ export default {
       confirmPassword: '',
       lastName: '',
       firstName: '',
-      userName: ''
+      userName: '',
+      logInEmail: '',
+      logInPass: ''
     }
   },
   methods: {
@@ -76,8 +74,8 @@ export default {
       this.hideConfirmModal()
       try {
         const result = await AccountService.login({
-          email: this.email,
-          password: this.password
+          email: this.logInEmail,
+          password: this.logInPass
         })
         if (result.message === 'Logged In') {
           localStorage.setItem('auth_token', result.token)
@@ -92,7 +90,7 @@ export default {
         console.log(error)
       }
     },
-    async createdAccount() {
+    async createAccount() {
       try {
         const result = await AccountService.createAccount({
           email: this.email,
@@ -100,12 +98,23 @@ export default {
           firstName: this.firstName,
           lastName: this.lastName
         })
-        this.userName = this.firstName + ' ' + this.lastName
+        this.userName = result.account.firstName + ' ' + result.account.lastName
+        this.resetFormInfo()
+        this.showConfirmModal()
       } catch (error) {
         if (error.response) {
           this.showErrorBox(error.response.data.message)
         }
       }
+    },
+    resetFormInfo() {
+      this.logInEmail = this.email
+      this.logInPass = this.password
+      this.email = ''
+      this.password = ''
+      this.confirmPassword = ''
+      this.lastName = ''
+      this.firstName = ''
     },
     showConfirmModal() {
       $(() => {
@@ -123,19 +132,13 @@ export default {
         var errMsg = errors.join('. ')
         this.showErrorBox(errMsg)
       } else {
-        this.createdAccount()
-        this.showConfirmModal()
+        this.createAccount()
       }
     }
   },
   created() {
-    this.firstName = this.userStore.signupForm.firstName
-    this.lastName = this.userStore.signupForm.lastName
-    this.email = this.userStore.signupForm.email
     this.password = ''
     this.confirmPassword = ''
   },
-  updated() {
-    this.userStore.saveSignUpForm(this.firstName, this.lastName, this.email)
-  }
+  mounted() {}
 }

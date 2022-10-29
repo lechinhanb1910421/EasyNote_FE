@@ -10,13 +10,7 @@ export const useUserStore = defineStore('user', {
       email: null,
       profilePic: null
     },
-    notes: [],
-    signupForm: {
-      firstName: null,
-      lastName: null,
-      email: null,
-      password: null
-    }
+    notes: []
   }),
   getters: {},
   actions: {
@@ -25,11 +19,6 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = lastName
       this.user.email = email
       this.user.profilePic = profilePic
-    },
-    async saveSignUpForm(firstName, lastName, email) {
-      this.signupForm.firstName = firstName
-      this.signupForm.lastName = lastName
-      this.signupForm.email = email
     },
     async getUser(token) {
       const token_user = await AccountService.getUser(token)

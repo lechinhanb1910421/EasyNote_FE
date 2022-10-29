@@ -10,6 +10,7 @@ export default {
     SignUpContainer,
     MyFooter
   },
+  emits: ['accountCreated'],
   setup() {
     const userStore = useUserStore()
     return {
@@ -32,11 +33,11 @@ export default {
     onClickChild(value) {
       alert(value)
     },
-    accountCreated(payload) {
+    accountCreated() {
+      console.log('Child call created')
       this.anchor = 'login'
-      this.userName = payload.account.firstName + ' ' + payload.account.lastName
-    },
-
+      // this.userName = payload.account.firstName + ' ' + payload.account.lastName
+    }
   },
   created() {
     if (this.userStore.user.email) {
