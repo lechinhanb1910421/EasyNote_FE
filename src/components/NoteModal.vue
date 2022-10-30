@@ -89,6 +89,7 @@ export default {
   padding-left: -10px;
 }
 .desc_detail {
+  white-space: pre-wrap;
   width: 90%;
   margin-left: 24px;
   font-size: 16px;

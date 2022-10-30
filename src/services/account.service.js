@@ -17,6 +17,11 @@ class AccountService {
       return (await this.api.get('/user', { params: { auth_token: token } })).data
     } catch (error) {}
   }
+  async getUserByEmail(email) {
+    try {
+      return (await this.api.get('/', { params: { email: email } })).data
+    } catch (error) {}
+  }
   async createAccount(payload) {
     return (await this.api.post('/register', payload)).data
   }

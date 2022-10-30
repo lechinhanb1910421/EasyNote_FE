@@ -9,7 +9,8 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      isValidEmail: false
     }
   },
   methods: {
@@ -44,10 +45,29 @@ export default {
         console.log(error)
       }
     },
+    changeEmail() {
+      this.email = ''
+      this.isValidEmail = false
+    },
+    async continueLogin() {
+      if (!this.email) {
+        this.showErrorBox('Email can not be empty')
+      } else {
+        try {
+          const isEmailExist = await AccountService.getUserByEmail(this.email)
+          if (isEmailExist) {
+            this.isValidEmail = true
+          }
+        } catch (error) {
+          if (error.response) {
+            this.showErrorBox(error.response.data.message)
+          }
+        }
+      }
+    },
     async googleClick(event) {
-      this.$emit('childCall', 'Hello, please use this function later. Hehe')
+      this.isValidEmail = !this.isValidEmail
+      // this.$emit('childCall', 'Hello, please use this function later. Hehe')
     }
-  },
-  async created() {},
-  updated() {}
+  }
 }

@@ -10,17 +10,22 @@
         <label for="email">Email address</label>
       </div>
     </div>
-    <div class="col-12 mb-3" id="pwd_container">
+    <div v-if="isValidEmail" class="col-12 mb-3" id="pwd_container">
       <div class="form-floating login_inputs">
         <input type="password" v-model="password" @click="hideErrorBox" class="form-control" placeholder="Password" />
         <label for="password">Password</label>
       </div>
     </div>
 
-    <div id="error_box" style="display: none"></div>
+    <div id="error_box" class="mb-3" style="display: none"></div>
 
-    <div class="col-12">
-      <button type="submit" id="continue" form="login_form" class="btn">Log In</button>
+    <div class="col-12" v-if="!isValidEmail">
+      <button type="button" id="continue" class="btn btn_login" @click="continueLogin">Continue</button>
+      <hr class="mt-4 m-auto" style="width: 90%" />
+    </div>
+    <div class="col-12" v-if="isValidEmail">
+      <button type="submit" id="login" form="login_form" class="btn btn_login">Log In</button>
+      <button @click="changeEmail" class="changeAccount">I want to use another account</button>
       <hr class="mt-4 m-auto" style="width: 90%" />
     </div>
   </form>
@@ -47,9 +52,8 @@
   margin: auto;
 }
 
-#continue,
+.btn_login,
 #gg_login {
-  margin-top: 15px;
   width: 80%;
   height: 45px;
   font-size: 17px;
@@ -68,6 +72,20 @@
   box-shadow: #9acca9 0px 0px 0px 4px;
   background-color: #b4f8c8;
 }
+.changeAccount {
+  width: 300px;
+  border-radius: 0.5rem;
+  background: none;
+  border: none;
+  margin-top: 10px;
+  padding: 5px;
+  font-size: 17px;
+  font-weight: 500;
+}
+.changeAccount:hover {
+  background-color: rgb(230, 230, 230);
+  color: green;
+}
 #google_icon {
   display: inline-block;
   width: 25px;
@@ -77,5 +95,18 @@
   background: url('src/assets/icons/google_icon.png');
   background-size: contain;
   background-repeat: no-repeat;
+}
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 </style>
