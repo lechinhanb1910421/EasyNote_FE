@@ -27,6 +27,18 @@ export const useUserStore = defineStore('user', {
       this.user.email = token_user.email
       this.user.profilePic = token_user.profilePic
     },
+    async getUserByEmail(email) {
+      try {
+        const isEmailExist = await AccountService.getUserByEmail(email)
+        if (isEmailExist) {
+          return { status: 'success', account: isEmailExist }
+        }
+      } catch (error) {
+        if (error.response) {
+          return { status: 'fail', message: error.response.data.message }
+        }
+      }
+    },
     async getUserNotes(email) {
       this.notes = await NoteService.getUserNotes(email)
     },

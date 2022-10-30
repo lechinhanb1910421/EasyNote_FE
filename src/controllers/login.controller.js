@@ -5,7 +5,12 @@ export default {
   emits: {
     childCall: null
   },
-
+  setup() {
+    const userStore = useUserStore()
+    return {
+      userStore
+    }
+  },
   data() {
     return {
       email: '',
@@ -54,15 +59,13 @@ export default {
         this.showErrorBox('Email can not be empty')
       } else {
         try {
-          const isEmailExist = await AccountService.getUserByEmail(this.email)
-          if (isEmailExist) {
+          const result = await this.userStore.getUserByEmail(this.email)
+          if (result.status === 'fail') {
+            this.showErrorBox(result.message)
+          } else {
             this.isValidEmail = true
           }
-        } catch (error) {
-          if (error.response) {
-            this.showErrorBox(error.response.data.message)
-          }
-        }
+        } catch (error) {}
       }
     },
     async googleClick(event) {

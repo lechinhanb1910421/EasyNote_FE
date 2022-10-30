@@ -6,7 +6,14 @@
   <form id="login_form" name="formName" @submit.prevent="submit">
     <div class="col-12">
       <div class="form-floating mb-3 login_inputs">
-        <input type="email" name="email" v-model="email" @click="hideErrorBox" class="form-control" placeholder="name@example.com" />
+        <input
+          type="email"
+          name="email"
+          v-model="email"
+          @click="hideErrorBox"
+          class="form-control"
+          :disabled="isValidEmail"
+          placeholder="name@example.com" />
         <label for="email">Email address</label>
       </div>
     </div>
