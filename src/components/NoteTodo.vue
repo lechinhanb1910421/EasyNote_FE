@@ -8,9 +8,9 @@ export default {
   },
   props: ['noteTitle', 'noteDescrip'],
   setup() {
-    const userStore = useUserStore()
+    const userNotes = useUserStore().notes.pending
     return {
-      userStore
+      userNotes
     }
   },
   data() {
@@ -22,9 +22,9 @@ export default {
   },
   methods: {
     showDetailNote(index) {
-      this.detailTitle = this.userStore.notes[index].title
-      this.detailDescrip = this.userStore.notes[index].description
-      this.editNoteId = this.userStore.notes[index]._id
+      this.detailTitle = this.userNotes[index].title
+      this.detailDescrip = this.userNotes[index].description
+      this.editNoteId = this.userNotes[index]._id
       $(this.$refs.detailNote).modal('show')
     },
     async noteChanged(note) {
@@ -53,14 +53,14 @@ export default {
       <span class="profile_userEmail">Author: {{ userStore.user.email }}</span>
     </div>
   </button> -->
-  <div v-if="!userStore.notes.length">
+  <div v-if="!userNotes.length">
     <button class="noteSumary_ctn" type="button">
       <div style="float: left; clear: left">
         <span><strong>Hooray! There is nothing to do today</strong> </span>
       </div>
     </button>
   </div>
-  <div v-for="(item, idx) in userStore.notes">
+  <div v-for="(item, idx) in userNotes">
     <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
       <div style="float: left; clear: left">
         <span class="noteSumary_title">Title: {{ item.title }}</span>
@@ -69,7 +69,12 @@ export default {
     </button>
   </div>
   <div class="modal fade modal-lg" id="detailNote" ref="detailNote" tabindex="-1" aria-labelledby="detailNoteTitle" aria-hidden="true">
-    <NotePanel :note-title="detailTitle" :note-descrip="detailDescrip" @note-changed="noteChanged" :noteId="editNoteId"></NotePanel>
+    <NotePanel
+      :note-state="'Pending'"
+      :note-title="detailTitle"
+      :note-descrip="detailDescrip"
+      @note-changed="noteChanged"
+      :noteId="editNoteId"></NotePanel>
   </div>
 </template>
 <style scoped>

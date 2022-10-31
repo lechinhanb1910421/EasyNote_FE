@@ -10,7 +10,10 @@ export const useUserStore = defineStore('user', {
       email: null,
       profilePic: null
     },
-    notes: []
+    notes: {
+      pending: [],
+      doing: []
+    }
   }),
   getters: {},
   actions: {
@@ -40,7 +43,15 @@ export const useUserStore = defineStore('user', {
       }
     },
     async getUserNotes(email) {
-      this.notes = await NoteService.getUserNotes(email)
+      const userNotes = await NoteService.getUserNotes(email)
+      userNotes.forEach((elem) => {
+        if (elem.state == 'doing') {
+          this.notes.doing.push(elem)
+        }
+        if (elem.state == 'pending') {
+          this.notes.pending.push(elem)
+        }
+      })
     },
     getUserFullName() {
       return this.user.firstName + ' ' + this.user.lastName
