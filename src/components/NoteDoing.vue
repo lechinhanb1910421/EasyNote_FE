@@ -39,8 +39,7 @@ export default {
         console.log('can not change note', error)
       }
     }
-  },
-  mounted() {}
+  }
 }
 </script>
 <template>
@@ -86,10 +85,11 @@ export default {
 .noteSumary_ctn {
   border: 1px solid rgb(221, 221, 221);
   height: 80px;
-  width: 380px;
+  width: 98%;
+  margin: auto;
+  margin-bottom: 7px;
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
   border-radius: 0.75rem;
   background-color: rgb(240, 240, 240);
   box-shadow: rgb(0 0 0 / 20%) 2px 2px 6px 0;

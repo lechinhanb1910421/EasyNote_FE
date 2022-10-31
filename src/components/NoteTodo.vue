@@ -8,7 +8,8 @@ export default {
   },
   props: ['noteTitle', 'noteDescrip'],
   setup() {
-    const userNotes = useUserStore().notes.pending
+    const userNotes = useUserStore()
+
     return {
       userNotes
     }
@@ -22,9 +23,9 @@ export default {
   },
   methods: {
     showDetailNote(index) {
-      this.detailTitle = this.userNotes[index].title
-      this.detailDescrip = this.userNotes[index].description
-      this.editNoteId = this.userNotes[index]._id
+      this.detailTitle = this.userNotes.notes.pending[index].title
+      this.detailDescrip = this.userNotes.notes.pending[index].description
+      this.editNoteId = this.userNotes.notes.pending[index]._id
       $(this.$refs.detailNote).modal('show')
     },
     async noteChanged(note) {
@@ -38,9 +39,17 @@ export default {
       } catch (error) {
         console.log('can not change note', error)
       }
+    },
+    async deleteNote() {
+      try {
+        await this.userNotes.deleteNote(this.editNoteId)
+        this.$toast.success(`Note was deleted`, {
+          duration: 3000
+        })
+      } catch (error) {}
     }
   },
-  mounted() {}
+  created() {}
 }
 </script>
 <template>
@@ -53,14 +62,14 @@ export default {
       <span class="profile_userEmail">Author: {{ userStore.user.email }}</span>
     </div>
   </button> -->
-  <div v-if="!userNotes.length">
+  <div v-if="!userNotes.notes.pending.length">
     <button class="noteSumary_ctn" type="button">
       <div style="float: left; clear: left">
         <span><strong>Hooray! There is nothing to do today</strong> </span>
       </div>
     </button>
   </div>
-  <div v-for="(item, idx) in userNotes">
+  <div v-for="(item, idx) in userNotes.notes.pending">
     <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
       <div style="float: left; clear: left">
         <span class="noteSumary_title">Title: {{ item.title }}</span>
@@ -68,12 +77,22 @@ export default {
       </div>
     </button>
   </div>
-  <div class="modal fade modal-lg" id="detailNote" ref="detailNote" tabindex="-1" aria-labelledby="detailNoteTitle" aria-hidden="true">
+  <div
+    class="modal fade modal-lg"
+    id="detailNote"
+    ref="detailNote"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    >
     <NotePanel
       :note-state="'Pending'"
       :note-title="detailTitle"
       :note-descrip="detailDescrip"
       @note-changed="noteChanged"
+      @delete-note="deleteNote"
       :noteId="editNoteId"></NotePanel>
   </div>
 </template>
@@ -84,17 +103,19 @@ export default {
 .noteSumary_ctn {
   border: 1px solid rgb(221, 221, 221);
   height: 80px;
-  width: 380px;
+  width: 98%;
+  margin: auto;
+  margin-bottom: 7px;
   display: flex;
   align-items: center;
-  margin-bottom: 5px;
   border-radius: 0.75rem;
   background-color: rgb(240, 240, 240);
   box-shadow: rgb(0 0 0 / 20%) 2px 2px 6px 0;
 }
 .noteSumary_title {
   text-align: left;
-  width: 320px;
+  width: 98%;
+  margin: auto;
   font-size: 17px;
   margin-left: 15px;
   font-weight: bold;
@@ -107,7 +128,7 @@ export default {
 .noteSumary_des {
   text-align: left;
   font-size: 14px;
-  width: 300px;
+  max-width: 300px;
   margin-left: 15px;
   float: left;
   clear: left;

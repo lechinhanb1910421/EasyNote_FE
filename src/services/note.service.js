@@ -14,6 +14,9 @@ class NoteService {
   async editNote(payload) {
     return (await this.api.put(`/${payload.id}`, { description: payload.note })).data
   }
+  async deleteNote(id) {
+    return (await this.api.delete(`/${id}`)).data
+  }
 }
 
 export default new NoteService()

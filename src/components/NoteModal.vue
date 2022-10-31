@@ -2,12 +2,14 @@
 export default {
   props: ['noteTitle', 'noteDescrip', 'noteState'],
   emits: {
-    noteChanged: null
+    noteChanged: null,
+    deleteNote: null
   },
   data() {
     return {
       isEditting: false,
-      editedNote: ''
+      editedNote: '',
+      nextStateTitle: ''
     }
   },
   methods: {
@@ -26,11 +28,24 @@ export default {
     },
     cancelEdit() {
       this.isEditting = false
+    },
+    deleteNote() {
+      if (confirm('Do you want to delete this note ?') == true) {
+        this.$refs.clsModal.click()
+        this.$emit('deleteNote')
+      }
     }
   },
   created() {
     this.isEditting = false
     this.editedNote = this.noteDescrip
+  },
+  mounted() {
+    if (this.noteState === 'Pending') {
+      this.nextStateTitle = 'Mark as Doing'
+    } else if (this.noteState === 'Doing') {
+      this.nextStateTitle = 'Mark as Done'
+    }
   }
 }
 </script>
@@ -39,7 +54,7 @@ export default {
     <div class="modal-content">
       <div class="modal-header">
         <span class="modal-title" id="detailNoteTitle"><i class="fa-solid fa-wrench"></i> {{ noteTitle }}</span>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEdit"></button>
+        <button type="button" ref="clsModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEdit"></button>
       </div>
       <div class="modal-body">
         <span class="desc_title">
@@ -59,9 +74,10 @@ export default {
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-closeModal">Delete note</button>
-        <button type="button" class="btn btn-closeModal">Mark as unfulfilled</button>
-        <button type="button" class="btn btn-closeModal" data-bs-dismiss="modal" aria-label="Close" @click="cancelEdit">Close</button>
+        <button type="button" class="btn btn_del" @click="deleteNote">Delete Note</button>
+        <button type="button" class="btn btn_unff">Mark as unfulfilled</button>
+        <button type="button" class="btn btn_nextState">{{ nextStateTitle }}</button>
+        <button type="button" class="btn btn_closeNote" data-bs-dismiss="modal" aria-label="Close" @click="cancelEdit">Close Note</button>
       </div>
     </div>
   </div>
@@ -82,14 +98,6 @@ export default {
 .modal-header {
   background-color: #dfd3c3;
 }
-.btn-closeModal {
-  color: white;
-  width: 100px;
-  font-weight: 500;
-  font-size: 17px;
-  background-color: rgb(220, 10, 10);
-  box-shadow: rgb(0 0 0 / 30%) 2px 2px 6px 0;
-}
 
 .modal-body {
   background-color: #f8ede3;
@@ -98,14 +106,23 @@ export default {
 }
 .modal-footer {
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
   background-color: #b19c8f;
 }
 .modal-footer button {
   flex: 1;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 7px;
+  margin-right: 7px;
+  font-weight: 500;
+  font-size: 14px;
+  width: 50%;
+  color: white;
   transition: transform 0.2s;
+  background-color: #9d5353;
+  box-shadow: rgb(0 0 0 / 30%) 2px 2px 6px 0;
+}
+.modal-footer button:active {
+  background-color: #9d5353;
 }
 .desc_title {
   display: flex;
@@ -171,7 +188,6 @@ textarea {
 .editableDes {
   text-align: center;
 }
-
 button:hover {
   transform: scale(1.1);
 }

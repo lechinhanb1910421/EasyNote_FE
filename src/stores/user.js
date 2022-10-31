@@ -64,6 +64,17 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = ''
       this.user.email = ''
       this.user.profilePic = ''
+    },
+    removeStoreNote() {
+      this.notes.pending = []
+      this.notes.doing = []
+    },
+    async deleteNote(id) {
+      try {
+        await NoteService.deleteNote(id)
+        this.removeStoreNote()
+        await this.getUserNotes(this.user.email)
+      } catch (error) {}
     }
   }
 })
