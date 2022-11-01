@@ -12,7 +12,8 @@ export const useUserStore = defineStore('user', {
     },
     notes: {
       pending: [],
-      doing: []
+      doing: [],
+      done: []
     }
   }),
   getters: {},
@@ -43,14 +44,17 @@ export const useUserStore = defineStore('user', {
       }
     },
     async getUserNotes(email) {
-      // this.removeStoreNote()
+      this.notes = { pending: [], doing: [], done: [] }
       const userNotes = await NoteService.getUserNotes(email)
       userNotes.forEach((elem) => {
         if (elem.state == 'doing') {
           this.notes.doing.push(elem)
-        }
-        if (elem.state == 'pending') {
+        } else if (elem.state == 'pending') {
           this.notes.pending.push(elem)
+        } else if (elem.state == 'done') {
+          this.notes.done.push(elem)
+        } else {
+          this.deleteNote(elem._id)
         }
       })
     },
@@ -66,18 +70,10 @@ export const useUserStore = defineStore('user', {
       this.user.email = ''
       this.user.profilePic = ''
     },
-    async deleteNote(id, state, index) {
+    async deleteNote(id) {
       try {
         await NoteService.deleteNote(id)
-        if (state === 'pending') {
-          const start = this.notes.pending.slice(0, index)
-          const end = this.notes.pending.slice(index + 1)
-          this.notes.pending = start.concat(end)
-        } else if (state === 'doing') {
-          const start = this.notes.doing.slice(0, index)
-          const end = this.notes.doing.slice(index + 1)
-          this.notes.doing = start.concat(end)
-        }
+        this.getUserNotes(this.email)
       } catch (error) {}
     }
   }

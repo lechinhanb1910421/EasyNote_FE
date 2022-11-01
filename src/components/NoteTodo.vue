@@ -44,8 +44,9 @@ export default {
     },
     async deleteNote() {
       try {
-        await this.userNotes.deleteNote(this.editNoteId, 'pending', this.editNoteIndex)
-        this.$toast.success(`Note was deleted`, {
+        await this.userNotes.deleteNote(this.editNoteId)
+        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was deleted </span>'
+        this.$toast.success(message, {
           duration: 3000
         })
       } catch (error) {}

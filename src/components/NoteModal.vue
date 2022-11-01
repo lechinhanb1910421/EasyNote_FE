@@ -75,8 +75,8 @@ export default {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn_del" @click="deleteNote">Delete Note</button>
-        <button type="button" class="btn btn_unff">Mark as unfulfilled</button>
-        <button type="button" class="btn btn_nextState">{{ nextStateTitle }}</button>
+        <button type="button" class="btn btn_unff" v-if="nextStateTitle">Mark as unfulfilled</button>
+        <button type="button" class="btn btn_nextState" v-if="nextStateTitle">{{ nextStateTitle }}</button>
         <button type="button" class="btn btn_closeNote" data-bs-dismiss="modal" aria-label="Close" @click="cancelEdit">Close Note</button>
       </div>
     </div>

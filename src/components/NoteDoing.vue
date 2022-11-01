@@ -41,8 +41,9 @@ export default {
     },
     async deleteNote() {
       try {
-        await this.userNotes.deleteNote(this.editNoteId, 'doing', this.editNoteIndex)
-        this.$toast.success(`Note was deleted`, {
+        await this.userNotes.deleteNote(this.editNoteId)
+        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was deleted </span>'
+        this.$toast.success(message, {
           duration: 3000
         })
       } catch (error) {}
@@ -55,13 +56,6 @@ export default {
     <h1 class="text-center">DOING</h1>
   </div>
   <div id="note_content">
-    <div v-if="!userNotes.notes.doing.length">
-      <button class="noteSumary_ctn" type="button">
-        <div style="float: left; clear: left">
-          <span><strong>Hooray! There is nothing to do today</strong> </span>
-        </div>
-      </button>
-    </div>
     <div v-for="(item, idx) in userNotes.notes.doing">
       <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
         <div style="float: left; clear: left">

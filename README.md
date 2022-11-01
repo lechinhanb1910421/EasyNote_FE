@@ -4,7 +4,7 @@ EverNote helps you manage all of your task fast and easily
 
 ## Checkout NodeJS Backend Side
 
-[Back-end](https://github.com/lechinhanb1910421/EverNote_BE)
+[EverNote Back-end](https://github.com/lechinhanb1910421/EverNote_BE)
 
 ## Customize configuration
 
