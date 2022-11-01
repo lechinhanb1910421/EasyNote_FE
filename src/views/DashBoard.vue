@@ -50,7 +50,7 @@ export default {
         console.log(error)
         router.push('/login')
       }
-    },
+    }
   },
   async created() {
     await this.getUser()
@@ -76,11 +76,13 @@ export default {
   justify-content: space-between;
 }
 .notes_ctn {
+  max-height: 600px;
   width: 32%;
   padding: 12px;
   box-shadow: rgb(0 0 0 / 30%) 3px 7px 7px 2px;
   border-radius: 0.75rem;
 }
+
 .noteToDo_ctn {
   height: 600px;
   background-color: #f1f1ae;

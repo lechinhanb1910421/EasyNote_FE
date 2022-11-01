@@ -8,7 +8,7 @@ export default {
   },
   props: ['noteTitle', 'noteDescrip'],
   setup() {
-    const userNotes = useUserStore().notes.doing
+    const userNotes = useUserStore()
     return {
       userNotes
     }
@@ -17,14 +17,16 @@ export default {
     return {
       detailTitle: '',
       detailDescrip: '',
-      editNoteId: ''
+      editNoteId: '',
+      editNoteIndex: ''
     }
   },
   methods: {
     showDetailNote(index) {
-      this.detailTitle = this.userNotes[index].title
-      this.detailDescrip = this.userNotes[index].description
-      this.editNoteId = this.userNotes[index]._id
+      this.detailTitle = this.userNotes.notes.doing[index].title
+      this.detailDescrip = this.userNotes.notes.doing[index].description
+      this.editNoteId = this.userNotes.notes.doing[index]._id
+      this.editNoteIndex = index
       $(this.$refs.detailNote).modal('show')
     },
     async noteChanged(note) {
@@ -35,9 +37,15 @@ export default {
           this.detailTitle = result.note.title
           this.detailDescrip = result.note.description
         }
-      } catch (error) {
-        console.log('can not change note', error)
-      }
+      } catch (error) {}
+    },
+    async deleteNote() {
+      try {
+        await this.userNotes.deleteNote(this.editNoteId, 'doing', this.editNoteIndex)
+        this.$toast.success(`Note was deleted`, {
+          duration: 3000
+        })
+      } catch (error) {}
     }
   }
 }
@@ -46,21 +54,24 @@ export default {
   <div>
     <h1 class="text-center">DOING</h1>
   </div>
-  <div v-if="!userNotes.length">
-    <button class="noteSumary_ctn" type="button">
-      <div style="float: left; clear: left">
-        <span><strong>Hooray! There is nothing to do today</strong> </span>
-      </div>
-    </button>
+  <div id="note_content">
+    <div v-if="!userNotes.notes.doing.length">
+      <button class="noteSumary_ctn" type="button">
+        <div style="float: left; clear: left">
+          <span><strong>Hooray! There is nothing to do today</strong> </span>
+        </div>
+      </button>
+    </div>
+    <div v-for="(item, idx) in userNotes.notes.doing">
+      <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
+        <div style="float: left; clear: left">
+          <span class="noteSumary_title">Title: {{ item.title }}</span>
+          <span class="noteSumary_des">Description: {{ item.description }}</span>
+        </div>
+      </button>
+    </div>
   </div>
-  <div v-for="(item, idx) in userNotes">
-    <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
-      <div style="float: left; clear: left">
-        <span class="noteSumary_title">Title: {{ item.title }}</span>
-        <span class="noteSumary_des">Description: {{ item.description }}</span>
-      </div>
-    </button>
-  </div>
+
   <div
     class="modal fade modal-lg"
     ref="detailNote"
@@ -75,12 +86,21 @@ export default {
       :note-title="detailTitle"
       :note-descrip="detailDescrip"
       @note-changed="noteChanged"
+      @delete-note="deleteNote"
       :noteId="editNoteId"></NotePanel>
   </div>
 </template>
 <style scoped>
 .modal-lg {
   background-color: transparent;
+}
+#note_content {
+  border-radius: 0.5rem;
+  max-height: 510px;
+  overflow: auto;
+}
+#note_content::-webkit-scrollbar {
+  display: none;
 }
 .noteSumary_ctn {
   border: 1px solid rgb(221, 221, 221);

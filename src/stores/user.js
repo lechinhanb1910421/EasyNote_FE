@@ -43,6 +43,7 @@ export const useUserStore = defineStore('user', {
       }
     },
     async getUserNotes(email) {
+      // this.removeStoreNote()
       const userNotes = await NoteService.getUserNotes(email)
       userNotes.forEach((elem) => {
         if (elem.state == 'doing') {
@@ -65,15 +66,18 @@ export const useUserStore = defineStore('user', {
       this.user.email = ''
       this.user.profilePic = ''
     },
-    removeStoreNote() {
-      this.notes.pending = []
-      this.notes.doing = []
-    },
-    async deleteNote(id) {
+    async deleteNote(id, state, index) {
       try {
         await NoteService.deleteNote(id)
-        this.removeStoreNote()
-        await this.getUserNotes(this.user.email)
+        if (state === 'pending') {
+          const start = this.notes.pending.slice(0, index)
+          const end = this.notes.pending.slice(index + 1)
+          this.notes.pending = start.concat(end)
+        } else if (state === 'doing') {
+          const start = this.notes.doing.slice(0, index)
+          const end = this.notes.doing.slice(index + 1)
+          this.notes.doing = start.concat(end)
+        }
       } catch (error) {}
     }
   }
