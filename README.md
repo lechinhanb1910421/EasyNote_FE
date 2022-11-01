@@ -1,9 +1,10 @@
 # EverNote Frontend
-This template should help get you started developing with Vue 3 in Vite.
+The Frontend side of EverNote WebApp
+EverNote helps you manage all of your task fast and easily
 
-## Recommended IDE Setup
+## Checkout NodeJS Backend Side
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+[Back-end](https://github.com/lechinhanb1910421/EverNote_BE)
 
 ## Customize configuration
 
@@ -16,6 +17,7 @@ npm install
 ```
 
 ### Compile and Hot-Reload for Development
+Front end is running on port 3000
 
 ```sh
 npm run dev
