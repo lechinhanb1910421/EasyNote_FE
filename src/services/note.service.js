@@ -11,12 +11,19 @@ class NoteService {
   async getUserNotes(email) {
     return (await this.api.get('/', { params: { email: email } })).data
   }
-  async editNote(payload) {
-    return (await this.api.put(`/${payload.id}`, { description: payload.note })).data
+  async updateNote(payload) {
+    if (payload.description) {
+      return (await this.api.put(`/${payload.id}`, { description: payload.description })).data
+    } else if (payload.state) {
+      return (await this.api.put(`/${payload.id}`, { state: payload.state })).data
+    }
   }
   async deleteNote(id) {
     return (await this.api.delete(`/${id}`)).data
   }
+  // async updateNoteState(id, nextState) {
+  //   return (await this.api.put(`/${id}`, { params: { state: nextState } })).data
+  // }
 }
 
 export default new NoteService()

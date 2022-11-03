@@ -75,6 +75,19 @@ export const useUserStore = defineStore('user', {
         await NoteService.deleteNote(id)
         this.getUserNotes(this.email)
       } catch (error) {}
+    },
+    async editNote(payload) {
+      try {
+        const result = await NoteService.updateNote(payload)
+        this.getUserNotes(this.email)
+        return result
+      } catch (error) {}
+    },
+    async updateNoteState(id, nextState) {
+      try {
+        const result = await NoteService.updateNote(id, nextState)
+        this.getUserNotes(this.email)
+      } catch (error) {}
     }
   }
 })

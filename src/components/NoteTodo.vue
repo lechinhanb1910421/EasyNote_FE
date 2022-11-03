@@ -1,7 +1,6 @@
 <script>
 import { useUserStore } from '@/stores/user'
 import NotePanel from '@/components/NoteModal.vue'
-import NoteService from '@/services/note.service'
 export default {
   components: {
     NotePanel
@@ -19,7 +18,8 @@ export default {
       detailTitle: '',
       detailDescrip: '',
       editNoteId: '',
-      editNoteIndex: ''
+      editNoteIndex: '',
+      nextState: ''
     }
   },
   methods: {
@@ -31,8 +31,9 @@ export default {
       $(this.$refs.detailNote).modal('show')
     },
     async noteChanged(note) {
-      const payload = { note: note, id: this.editNoteId }
-      const result = await NoteService.editNote(payload)
+      const payload = { id: this.editNoteId, description: note }
+      const result = await this.userNotes.editNote(payload)
+
       try {
         if (result.message) {
           this.detailTitle = result.note.title
@@ -50,6 +51,15 @@ export default {
           duration: 3000
         })
       } catch (error) {}
+    },
+    async moveState(noteState) {
+      if (noteState == 'Pending') {
+        this.nextState = 'doing'
+      } else if (noteState == 'Doing') {
+        this.nextState = 'done'
+      }
+      const payload = { id: this.editNoteId, state: this.nextState }
+      await this.userNotes.editNote(payload)
     }
   },
   created() {}
@@ -92,6 +102,7 @@ export default {
       :note-descrip="detailDescrip"
       @note-changed="noteChanged"
       @delete-note="deleteNote"
+      @move-state="moveState"
       :noteId="editNoteId"></NotePanel>
   </div>
 </template>

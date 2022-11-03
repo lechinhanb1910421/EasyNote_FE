@@ -18,7 +18,8 @@ export default {
       detailTitle: '',
       detailDescrip: '',
       editNoteId: '',
-      editNoteIndex: ''
+      editNoteIndex: '',
+      nextState: ''
     }
   },
   methods: {
@@ -47,6 +48,19 @@ export default {
           duration: 3000
         })
       } catch (error) {}
+    },
+    async moveState(noteState) {
+      if (noteState == 'Pending') {
+        this.nextState = 'doing'
+      } else if (noteState == 'Doing') {
+        this.nextState = 'done'
+      }
+      const payload = { id: this.editNoteId, state: this.nextState }
+      await this.userNotes.editNote(payload)
+    },
+    async backState() {
+      const payload = { id: this.editNoteId, state: 'pending' }
+      await this.userNotes.editNote(payload)
     }
   }
 }
@@ -81,6 +95,8 @@ export default {
       :note-descrip="detailDescrip"
       @note-changed="noteChanged"
       @delete-note="deleteNote"
+      @move-state="moveState"
+      @back-state="backState"
       :noteId="editNoteId"></NotePanel>
   </div>
 </template>
