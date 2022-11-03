@@ -55,6 +55,7 @@ export default {
       } else if (noteState == 'Doing') {
         this.nextState = 'done'
       }
+
       const payload = { id: this.editNoteId, state: this.nextState }
       await this.userNotes.editNote(payload)
     },

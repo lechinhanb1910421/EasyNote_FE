@@ -95,7 +95,6 @@ export default {
     tabindex="-1"
     aria-labelledby="staticBackdropLabel"
     aria-hidden="true">
-    >
     <NotePanel
       :note-state="'Pending'"
       :note-title="detailTitle"

@@ -60,7 +60,7 @@ export default {
 </script>
 <template>
   <Header></Header>
-  <div class="container text-dark" style="padding-top: 70px; min-height: 100vh">
+  <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn"><NoteTodo></NoteTodo></div>
       <div class="noteDoing_ctn notes_ctn"><NoteDoing></NoteDoing></div>
