@@ -1,9 +1,11 @@
 <script>
 import { useUserStore } from '@/stores/user'
-import NotePanel from '@/components/NoteModal.vue'
+import NotePanel from '@/components/EditNoteModal.vue'
+import AddNotePanel from '@/components/AddNoteModal.vue'
 export default {
   components: {
-    NotePanel
+    NotePanel,
+    AddNotePanel
   },
   props: ['noteTitle', 'noteDescrip'],
   setup() {
@@ -23,12 +25,12 @@ export default {
     }
   },
   methods: {
-    showDetailNote(index) {
+    showeditNoteModal(index) {
       this.detailTitle = this.userNotes.notes.pending[index].title
       this.detailDescrip = this.userNotes.notes.pending[index].description
       this.editNoteId = this.userNotes.notes.pending[index]._id
       this.editNoteIndex = index
-      $(this.$refs.detailNote).modal('show')
+      $(this.$refs.editNoteModal).modal('show')
     },
     async noteChanged(note) {
       const payload = { id: this.editNoteId, description: note }
@@ -60,6 +62,9 @@ export default {
       }
       const payload = { id: this.editNoteId, state: this.nextState }
       await this.userNotes.editNote(payload)
+    },
+    toggleAddModal() {
+      $(this.$refs.addNoteModal).modal('show')
     }
   },
   created() {}
@@ -78,18 +83,25 @@ export default {
       </button>
     </div>
     <div v-for="(item, idx) in userNotes.notes.pending">
-      <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
+      <button class="noteSumary_ctn" type="button" @click="showeditNoteModal(idx)">
         <div style="float: left; clear: left">
           <span class="noteSumary_title">Title: {{ item.title }}</span>
           <span class="noteSumary_des">Description: {{ item.description }}</span>
         </div>
       </button>
     </div>
+    <button class="noteSumary_ctn noteAdd_ctn" type="button" @click="toggleAddModal">
+      <div style="float: left; clear: left">
+        <span>
+          <strong> <i class="fa-solid fa-plus hover_scroll"></i> Add a Note</strong>
+        </span>
+      </div>
+    </button>
   </div>
   <div
     class="modal fade modal-lg"
-    id="detailNote"
-    ref="detailNote"
+    id="editNoteModal"
+    ref="editNoteModal"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -103,6 +115,17 @@ export default {
       @delete-note="deleteNote"
       @move-state="moveState"
       :noteId="editNoteId"></NotePanel>
+  </div>
+  <div
+    class="modal fade modal-lg"
+    id="addNoteModal"
+    ref="addNoteModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    <AddNotePanel></AddNotePanel>
   </div>
 </template>
 <style scoped>
@@ -152,5 +175,16 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.noteAdd_ctn {
+  height: 50px;
+  padding: 20px;
+  background-color: #cdfcf6;
+}
+.noteAdd_ctn i.hover_scroll {
+  transition: transform 0.3s;
+}
+.noteAdd_ctn:hover i.hover_scroll {
+  transform: rotate(90deg);
 }
 </style>

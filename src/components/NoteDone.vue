@@ -1,6 +1,6 @@
 <script>
 import { useUserStore } from '@/stores/user'
-import NotePanel from '@/components/NoteModal.vue'
+import NotePanel from '@/components/EditNoteModal.vue'
 import NoteService from '@/services/note.service'
 export default {
   components: {
@@ -42,7 +42,7 @@ export default {
     async deleteNote() {
       try {
         await this.userNotes.deleteNote(this.editNoteId)
-        const message = '<i class="fa-solid fa-circle-check"></i> Note was deleted'
+        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was deleted </span>'
         this.$toast.success(message, {
           duration: 3000
         })

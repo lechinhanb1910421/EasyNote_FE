@@ -1,6 +1,6 @@
 <script>
 import { useUserStore } from '@/stores/user'
-import NotePanel from '@/components/NoteModal.vue'
+import NotePanel from '@/components/EditNoteModal.vue'
 import NoteService from '@/services/note.service'
 export default {
   components: {
