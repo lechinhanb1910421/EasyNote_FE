@@ -65,6 +65,13 @@ export default {
     },
     toggleAddModal() {
       $(this.$refs.addNoteModal).modal('show')
+    },
+    closeAddModal() {
+      $(this.$refs.addNoteModal).modal('hide')
+      const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was added </span>'
+      this.$toast.success(message, {
+        duration: 3000
+      })
     }
   },
   created() {}
@@ -74,6 +81,13 @@ export default {
   <div>
     <h1 class="text-center">TODO</h1>
   </div>
+  <button class="noteSumary_ctn noteAdd_ctn" type="button" @click="toggleAddModal">
+    <div style="float: left; clear: left">
+      <span>
+        <strong> <i class="fa-solid fa-plus hover_scroll"></i> Add a Note</strong>
+      </span>
+    </div>
+  </button>
   <div id="note_content">
     <div v-if="!userNotes.notes.pending.length">
       <button class="noteSumary_ctn" type="button">
@@ -90,13 +104,6 @@ export default {
         </div>
       </button>
     </div>
-    <button class="noteSumary_ctn noteAdd_ctn" type="button" @click="toggleAddModal">
-      <div style="float: left; clear: left">
-        <span>
-          <strong> <i class="fa-solid fa-plus hover_scroll"></i> Add a Note</strong>
-        </span>
-      </div>
-    </button>
   </div>
   <div
     class="modal fade modal-lg"
@@ -125,7 +132,7 @@ export default {
     tabindex="-1"
     aria-labelledby="staticBackdropLabel"
     aria-hidden="true">
-    <AddNotePanel></AddNotePanel>
+    <AddNotePanel @close-modal="closeAddModal"></AddNotePanel>
   </div>
 </template>
 <style scoped>
@@ -134,7 +141,7 @@ export default {
 }
 #note_content {
   border-radius: 0.5rem;
-  max-height: 510px;
+  max-height: 450px;
   overflow: auto;
 }
 #note_content::-webkit-scrollbar {

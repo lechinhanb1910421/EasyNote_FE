@@ -88,6 +88,18 @@ export const useUserStore = defineStore('user', {
         const result = await NoteService.updateNote(id, nextState)
         this.getUserNotes(this.email)
       } catch (error) {}
+    },
+    async addNote(title, desc) {
+      const payload = {
+        email: this.user.email,
+        title: title,
+        description: desc,
+        state: 'pending'
+      }
+      try {
+        const result = await NoteService.addNote(payload)
+        this.getUserNotes(this.email)
+      } catch (error) {}
     }
   }
 })

@@ -21,9 +21,9 @@ class NoteService {
   async deleteNote(id) {
     return (await this.api.delete(`/${id}`)).data
   }
-  // async updateNoteState(id, nextState) {
-  //   return (await this.api.put(`/${id}`, { params: { state: nextState } })).data
-  // }
+  async addNote(payload) {
+    return (await this.api.post('/add', payload)).data
+  }
 }
 
 export default new NoteService()
