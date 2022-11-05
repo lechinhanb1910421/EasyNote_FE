@@ -18,12 +18,14 @@ export default {
   },
   methods: {
     discardNote() {
-      this.$emit('closeModal')
+      this.$emit('closeModal','discard')
+      this.noteTitle = ''
+      this.noteDescrip = ''
     },
     addNote() {
       try {
         this.noteStore.addNote(this.noteTitle, this.noteDescrip)
-        this.$emit('closeModal')
+        this.$emit('closeModal','added')
         this.noteTitle = ''
         this.noteDescrip = ''
       } catch (error) {

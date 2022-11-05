@@ -59,7 +59,7 @@ export default {
 }
 </script>
 <template>
-  <Header></Header>
+  <Header :on-dashboard="true"></Header>
   <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn"><NoteTodo></NoteTodo></div>

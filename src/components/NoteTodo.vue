@@ -66,12 +66,14 @@ export default {
     toggleAddModal() {
       $(this.$refs.addNoteModal).modal('show')
     },
-    closeAddModal() {
+    closeAddModal(value) {
       $(this.$refs.addNoteModal).modal('hide')
-      const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was added </span>'
-      this.$toast.success(message, {
-        duration: 3000
-      })
+      if (value === 'added') {
+        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was added </span>'
+        this.$toast.success(message, {
+          duration: 3000
+        })
+      }
     }
   },
   created() {}

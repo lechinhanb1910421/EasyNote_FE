@@ -4,6 +4,7 @@ import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 
 export default {
+  props: ['onDashboard'],
   setup() {
     const userStore = useUserStore()
     return {
@@ -16,7 +17,8 @@ export default {
       author: '',
       profilePic: '',
       userName: '',
-      userEmail: ''
+      userEmail: '',
+      searchMsg: ''
     }
   },
   methods: {
@@ -52,6 +54,9 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    gotoProfile() {
+      router.push('/profile')
     }
   },
   async created() {
@@ -60,15 +65,19 @@ export default {
       this.getQuote()
     }, 20000)
     this.getUserInfo()
+  },
+  watch: {
+    searchMsg: async function (message) {
+      if (message) {
+        const result = await this.userStore.findByKeyword(message)
+      }
+    }
   }
 }
 </script>
 <template>
   <nav class="navbar navbar-expand-lg" style="background-color: #60c9e2">
     <div class="container-lg">
-      <!-- <span class="navbar-brand"> -->
-      <!-- EverNote -->
-      <!-- </span> -->
       <button
         class="navbar-toggler"
         type="button"
@@ -80,11 +89,16 @@ export default {
         <span class="navbar-toggler-icon"></span>
       </button>
       <form class="d-flex" role="search">
-        <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
-        <input class="form-control me-2 empty header_search" type="search" placeholder="&#xF002; Search" aria-label="Search" />
-        <!-- <button class="btn search_btn" type="submit">
-          <span class="d-flex align-items-center justify-content-center"> <i class="fa-solid fa-magnifying-glass"></i> Search </span>
-        </button> -->
+        <router-link to="/">
+          <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
+        </router-link>
+        <input
+          class="form-control me-2 empty header_search"
+          type="search"
+          placeholder="&#xF002; Search Note"
+          aria-label="Search"
+          v-model="searchMsg"
+          v-if="onDashboard" />
       </form>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-lg-0">
@@ -102,7 +116,7 @@ export default {
               <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
               <ul class="dropdown-menu dropdown-menu-end" style="width: 350px; border-radius: 0.75rem" id="profileDropdown">
                 <li>
-                  <button class="dropdown-item profile_myprofile" type="button">
+                  <button class="dropdown-item profile_myprofile" type="button" @click="gotoProfile">
                     <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
                     <div style="float: left; clear: left">
                       <span class="profile_userName">{{ userName }} </span>

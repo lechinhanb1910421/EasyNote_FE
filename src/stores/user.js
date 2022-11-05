@@ -100,6 +100,9 @@ export const useUserStore = defineStore('user', {
         const result = await NoteService.addNote(payload)
         this.getUserNotes(this.email)
       } catch (error) {}
+    },
+    async findByKeyword(keyword){
+
     }
   }
 })
