@@ -1,5 +1,4 @@
 <script>
-import MyFooter from '@/components/Footer.vue'
 import LogInContainer from '@/components/LogInContainer.vue'
 import SignUpContainer from '@/components/SignUpContainer.vue'
 import router from '@/routers'
@@ -7,8 +6,7 @@ import { useUserStore } from '@/stores/user'
 export default {
   components: {
     LogInContainer,
-    SignUpContainer,
-    MyFooter
+    SignUpContainer
   },
   emits: ['accountCreated'],
   setup() {
@@ -86,8 +84,6 @@ export default {
       </div>
     </div>
   </div>
-
-  <!-- <MyFooter></MyFooter> -->
 </template>
 
 <style scoped>

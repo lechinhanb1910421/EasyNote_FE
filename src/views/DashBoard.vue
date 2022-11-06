@@ -1,6 +1,4 @@
 <script>
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
 import NoteTodo from '@/components/NoteTodo.vue'
 import NoteDoing from '@/components/NoteDoing.vue'
 import NoteDone from '@/components/NoteDone.vue'
@@ -12,8 +10,6 @@ import router from '@/routers'
 
 export default {
   components: {
-    // Header,
-    // Footer,
     NoteTodo,
     NoteDoing,
     NoteDone
@@ -59,7 +55,6 @@ export default {
 }
 </script>
 <template>
-  <!-- <Header :on-dashboard="true"></Header> -->
   <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn"><NoteTodo></NoteTodo></div>
@@ -67,7 +62,6 @@ export default {
       <div class="noteDone_ctn notes_ctn"><NoteDone></NoteDone></div>
     </div>
   </div>
-  <!-- <Footer></Footer> -->
 </template>
 <style scoped>
 .notesPads_Container {
