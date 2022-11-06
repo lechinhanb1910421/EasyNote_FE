@@ -12,8 +12,8 @@ import router from '@/routers'
 
 export default {
   components: {
-    Header,
-    Footer,
+    // Header,
+    // Footer,
     NoteTodo,
     NoteDoing,
     NoteDone
@@ -59,7 +59,7 @@ export default {
 }
 </script>
 <template>
-  <Header :on-dashboard="true"></Header>
+  <!-- <Header :on-dashboard="true"></Header> -->
   <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn"><NoteTodo></NoteTodo></div>
@@ -67,7 +67,7 @@ export default {
       <div class="noteDone_ctn notes_ctn"><NoteDone></NoteDone></div>
     </div>
   </div>
-  <Footer></Footer>
+  <!-- <Footer></Footer> -->
 </template>
 <style scoped>
 .notesPads_Container {

@@ -4,7 +4,6 @@ import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 
 export default {
-  props: ['onDashboard'],
   setup() {
     const userStore = useUserStore()
     return {
@@ -97,8 +96,7 @@ export default {
           type="search"
           placeholder="&#xF002; Search Note"
           aria-label="Search"
-          v-model="searchMsg"
-          v-if="onDashboard" />
+          v-model="searchMsg" />
       </form>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-lg-0">

@@ -22,13 +22,13 @@ export default {
 }
 </script>
 <template>
-  <MyHeader></MyHeader>
+  <!-- <MyHeader></MyHeader> -->
 
   <div class="container-fluid">
     <div id="login_main" class="container">dqwdw</div>
   </div>
 
-  <MyFooter></MyFooter>
+  <!-- <MyFooter></MyFooter> -->
 </template>
 
 <style scoped>

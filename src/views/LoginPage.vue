@@ -87,7 +87,7 @@ export default {
     </div>
   </div>
 
-  <MyFooter></MyFooter>
+  <!-- <MyFooter></MyFooter> -->
 </template>
 
 <style scoped>

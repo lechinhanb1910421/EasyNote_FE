@@ -2,34 +2,44 @@ import { createWebHistory, createRouter } from 'vue-router'
 import DashBoard from '@/views/DashBoard.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import Forgot from '@/components/Forgot.vue'
-import Welcome from '@/views/Welcome.vue'
 import Profile from '@/views/Profile.vue'
-
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: DashBoard
+    components: {
+      Header: Header,
+      mainBody: DashBoard,
+      Footer: Footer
+    }
   },
   {
     path: '/login',
     name: 'login',
-    component: LoginPage
+    components: {
+      mainBody: LoginPage,
+      Footer: Footer
+    }
   },
   {
     path: '/forgot',
     name: 'forgot',
-    component: Forgot
-  },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    component: Welcome
+    components: {
+      Header: Header,
+      mainBody: Forgot,
+      Footer: Footer
+    }
   },
   {
     path: '/profile',
     name: 'profile',
-    component: Profile
+    components: {
+      Header: Header,
+      mainBody: Profile,
+      Footer: Footer
+    }
   }
 ]
 
