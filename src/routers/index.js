@@ -50,9 +50,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.name != 'home') {
     const newTitle = to.name.charAt(0).toUpperCase() + to.name.slice(1)
-    document.title = 'EverNote - ' + newTitle
+    document.title = 'EasyNote - ' + newTitle
   } else {
-    document.title = 'EverNote'
+    document.title = 'EasyNote'
   }
   next()
 })

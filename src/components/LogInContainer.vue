@@ -1,7 +1,7 @@
 <script src="../controllers/login.controller.js"></script>
 <template>
   <div class="col-12 mt-4">
-    <h5>Log in to EverNote</h5>
+    <h5>Log in to EasyNote</h5>
   </div>
   <form id="login_form" name="formName" @submit.prevent="submit">
     <div class="col-12">

@@ -2,7 +2,7 @@
 
 <template>
   <div class="col-12 mt-4">
-    <h5>Sign up for EverNote account</h5>
+    <h5>Sign up for EasyNote account</h5>
   </div>
   <form ref="signUpForm" id="login_form" name="formName" @submit.prevent="submit">
     <div class="col-12 login_inputs">
@@ -55,7 +55,7 @@
           <p>
             Welcome on board <span class="modal_userName"> {{ userName }}</span>
           </p>
-          <p>Your EverNote account was successfully created.</p>
+          <p>Your EasyNote account was successfully created.</p>
         </div>
         <div class="modal-footer m-auto">
           <button type="button" class="btn btn-success" @click="logInAndGoHome">Go to Dash Board now</button>

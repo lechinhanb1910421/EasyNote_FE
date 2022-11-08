@@ -51,7 +51,7 @@ export default {
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-6 mt-3 mb-3 d-flex profile_info">
+      <div class="col-11 mt-3 mb-3 d-flex profile_info">
         <div class="profile_pic">
           <img src="src\assets\imgs\Everett2.jpg" alt="..." height="150" width="150" class="rounded-circle" />
         </div>
@@ -60,7 +60,7 @@ export default {
           <p class="prof_userEmail">{{ userEmail }}</p>
         </div>
         <div class="edit_ctn">
-          <button class="btn btn_editProfile" type="button">
+          <button class="btn btn_editProfile" type="button" data-bs-toggle="modal" data-bs-target="#edit_profile">
             <i class="fa-solid fa-pen-to-square"></i>
             Edit
           </button>
@@ -73,6 +73,43 @@ export default {
       <div id="profile_analyse" class="col-4">Score</div>
     </div>
   </div>
+
+  <!-- Modal  Edit Profile info -->
+  <div
+    class="modal fade modal-lg"
+    id="edit_profile"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit profile info</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-4 d-block">
+              <img class="avatar_edit" :src="userProPic" alt="..." />
+              <div>
+                <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
+                <input id="files" class="d-none" type="file" />
+              </div>
+            </div>
+            <div class="col-8">
+              
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -80,11 +117,12 @@ export default {
   min-height: 100vh;
 }
 .profile_info {
+  margin: auto;
   position: relative;
   display: flex;
-  justify-content: left;
+  justify-content: center;
   align-items: center;
-  padding: 20px 20px 20px 35px;
+  padding: 20px 20px 20px 0px;
   background-color: #fffcf2;
   border-radius: 0.75rem;
   box-shadow: rgb(0 0 0 / 20%) 3px 3px 8px 0;
@@ -116,5 +154,27 @@ export default {
 }
 #profile_analyse {
   background-color: rgb(43, 137, 226);
+}
+.modal-content {
+  width: 650px;
+  margin: auto;
+}
+.modal-body {
+  margin: 20px;
+}
+.btn_avatar {
+  margin-top: 10px;
+  width: 150px;
+  border: 2px solid black;
+  border-radius: 0.75rem;
+  background-color: rgb(220, 220, 220);
+}
+.btn_avatar:hover {
+  background-color: rgb(240, 240, 240);
+}
+.avatar_edit {
+  aspect-ratio: 1/1;
+  width: 150px;
+  border-radius: 50%;
 }
 </style>

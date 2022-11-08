@@ -50,7 +50,7 @@ export default {
       <div class="row text-center">
         <div class="col-md-2 col-xl-3"></div>
         <div class="col-12 col-md-8 col-xl-6">
-          <h2 id="login_title">EverNote</h2>
+          <h2 id="login_title">EasyNote</h2>
         </div>
       </div>
       <div class="row mt-3">
