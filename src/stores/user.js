@@ -69,24 +69,27 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = ''
       this.user.email = ''
       this.user.profilePic = ''
+      this.pending = []
+      this.doing = []
+      this.done = []
     },
     async deleteNote(id) {
       try {
         await NoteService.deleteNote(id)
-        this.getUserNotes(this.email)
+        this.getUserNotes(this.user.email)
       } catch (error) {}
     },
     async editNote(payload) {
       try {
         const result = await NoteService.updateNote(payload)
-        this.getUserNotes(this.email)
+        this.getUserNotes(this.user.email)
         return result
       } catch (error) {}
     },
     async updateNoteState(id, nextState) {
       try {
         const result = await NoteService.updateNote(id, nextState)
-        this.getUserNotes(this.email)
+        this.getUserNotes(this.user.email)
       } catch (error) {}
     },
     async addNote(title, desc) {
@@ -98,11 +101,9 @@ export const useUserStore = defineStore('user', {
       }
       try {
         const result = await NoteService.addNote(payload)
-        this.getUserNotes(this.email)
+        this.getUserNotes(this.user.email)
       } catch (error) {}
     },
-    async findByKeyword(keyword){
-
-    }
+    async findByKeyword(keyword) {}
   }
 })

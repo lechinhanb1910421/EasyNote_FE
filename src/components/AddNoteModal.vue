@@ -18,14 +18,26 @@ export default {
   },
   methods: {
     discardNote() {
-      this.$emit('closeModal','discard')
+      this.$emit('closeModal', 'discard')
       this.noteTitle = ''
       this.noteDescrip = ''
     },
     addNote() {
+      if (this.noteTitle == null || this.noteTitle == '') {
+        this.errorMsg = 'Title can not be null'
+        this.is_error = true
+        return
+      }
+      if (this.noteDescrip == null || this.noteDescrip == '') {
+        this.errorMsg = 'Description can not be null'
+        this.is_error = true
+        return
+      }
+      this.errorMsg = ''
+      this.is_error = false
       try {
         this.noteStore.addNote(this.noteTitle, this.noteDescrip)
-        this.$emit('closeModal','added')
+        this.$emit('closeModal', 'added')
         this.noteTitle = ''
         this.noteDescrip = ''
       } catch (error) {
@@ -35,15 +47,7 @@ export default {
       }
     }
   },
-  updated() {
-    if (this.noteTitle.length == 37) {
-      this.errorMsg = 'Title is too long!'
-      this.is_error = true
-    } else {
-      this.errorMsg = ''
-      this.is_error = false
-    }
-  }
+  updated() {}
 }
 </script>
 <template>
