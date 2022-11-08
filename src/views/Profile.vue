@@ -96,6 +96,7 @@ export default {
               <div>
                 <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
                 <input id="files" class="d-none" type="file" />
+                dqwdqwdqwd
               </div>
             </div>
             <div class="col-8">
