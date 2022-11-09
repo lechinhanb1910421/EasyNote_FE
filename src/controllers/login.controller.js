@@ -32,6 +32,12 @@ export default {
       $('#error_box').fadeOut()
     },
     async submit() {
+      if (!this.isValidEmail) {
+        this.$refs.continue.click()
+        return
+      } else {
+        this.$refs.pwd_inp.click()
+      }
       try {
         const result = await AccountService.login({
           email: this.email,

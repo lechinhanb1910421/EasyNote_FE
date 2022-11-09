@@ -19,7 +19,7 @@
     </div>
     <div v-if="isValidEmail" class="col-12 mb-3" id="pwd_container">
       <div class="form-floating login_inputs">
-        <input type="password" v-model="password" @click="hideErrorBox" class="form-control" placeholder="Password" />
+        <input type="password" v-model="password" @click="hideErrorBox" class="form-control" ref="pwd_inp" placeholder="Password" />
         <label for="password">Password</label>
       </div>
     </div>
@@ -27,7 +27,7 @@
     <div id="error_box" class="mb-3" style="display: none"></div>
 
     <div class="col-12" v-if="!isValidEmail">
-      <button type="button" id="continue" class="btn btn_login" @click="continueLogin">Continue</button>
+      <button type="button" id="continue" class="btn btn_login" @click="continueLogin" ref="continue">Continue</button>
       <hr class="mt-4 m-auto" style="width: 90%" />
     </div>
     <div class="col-12" v-if="isValidEmail">

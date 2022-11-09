@@ -104,6 +104,23 @@ export const useUserStore = defineStore('user', {
         this.getUserNotes(this.user.email)
       } catch (error) {}
     },
-    async findByKeyword(keyword) {}
+    async updateUserInfo(firstName, lastName, email) {
+      var payload = {
+        firstName: null,
+        lastName: null
+      }
+      if (firstName != this.user.firstName) {
+        payload.firstName = firstName
+      }
+      if (lastName != this.user.lastName) {
+        payload.lastName = lastName
+      }
+      try {
+        await AccountService.updateUserInfo(email, payload)
+        const res = await this.getUserByEmail(this.user.email).account
+        await saveUser(res.firstName, res.lastName, res.profilePic)
+        await this.getUserNotes(this.user.email)
+      } catch (error) {}
+    }
   }
 })

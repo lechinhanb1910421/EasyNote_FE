@@ -5,9 +5,18 @@ import { useUserStore } from '@/stores/user'
 export default {
   data() {
     return {
+      firstName: '',
+      lastName: '',
       userName: '',
       userEmail: '',
-      userProPic: ''
+      userProPic: '',
+      editedFName: '',
+      editedLName: '',
+      errorMsg: '',
+      isErr: false,
+      fNameErr: false,
+      lNameErr: false,
+      validUpdate: false
     }
   },
   setup() {
@@ -37,23 +46,82 @@ export default {
       }
     },
     getUserInfo() {
-      this.userName = this.userStore.user.firstName + ' ' + this.userStore.user.lastName
+      this.firstName = this.userStore.user.firstName
+      this.lastName = this.userStore.user.lastName
+      this.userName = this.firstName + ' ' + this.lastName
       this.userEmail = this.userStore.user.email
       this.userProPic = this.userStore.user.profilePic
+      this.editedFName = this.firstName
+      this.editedLName = this.lastName
+    },
+    discardEdit() {
+      this.editedFName = this.firstName
+      this.editedLName = this.lastName
+    },
+    showErrBox(error) {
+      this.errorMsg = error
+      this.isErr = true
+    },
+    hideErrBox() {
+      this.errorMsg = ''
+      this.isErr = false
+    },
+    async updateInfo() {
+      if (this.fNameErr || this.lNameErr || this.isErr) {
+        return
+      }
+      try {
+        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, this.userEmail)
+        await this.getUser()
+        this.getUserInfo()
+        this.$router.go({ name: 'profile' })
+      } catch (error) {}
     }
   },
   async created() {
     await this.getUser()
     this.getUserInfo()
+   
+  },
+
+  watch: {
+    editedFName: async function (message) {
+      if (message == null || message == '') {
+        this.showErrBox('First Name can not be empty')
+        this.fNameErr = true
+      } else {
+        if (message != this.firstName) {
+          this.validUpdate = true
+        } else {
+          this.validUpdate = false
+        }
+        this.fNameErr = false
+        this.hideErrBox()
+      }
+    },
+    editedLName: async function (message) {
+      if (message == null || message == '') {
+        this.showErrBox('Last Name can not be empty')
+        this.lNameErr = true
+      } else {
+        if (message != this.lastName) {
+          this.validUpdate = true
+        } else {
+          this.validUpdate = false
+        }
+        this.lNameErr = false
+        this.hideErrBox()
+      }
+    }
   }
 }
 </script>
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-11 mt-3 mb-3 d-flex profile_info">
+      <div class="col-12 mt-3 mb-3 d-flex profile_info">
         <div class="profile_pic">
-          <img src="src\assets\imgs\Everett2.jpg" alt="..." height="150" width="150" class="rounded-circle" />
+          <img :src="userProPic" alt="..." height="150" width="150" class="rounded-circle" />
         </div>
         <div class="general_info">
           <p class="prof_userName">{{ userName }}</p>
@@ -68,9 +136,15 @@ export default {
       </div>
     </div>
     <div class="row">
-      <div id="profile_analyse" class="col-4">Total notes</div>
-      <div id="profile_analyse" class="col-4">Total done</div>
-      <div id="profile_analyse" class="col-4">Score</div>
+      <div id="" class="col-4">
+        <div class="total_notes">Show total notes</div>
+      </div>
+      <div id="" class="col-4">
+        <div class="total_notes">Show total notes done</div>
+      </div>
+      <div id="" class="col-4">
+        <div class="total_notes">Show total EasyNote score</div>
+      </div>
     </div>
   </div>
 
@@ -78,6 +152,7 @@ export default {
   <div
     class="modal fade modal-lg"
     id="edit_profile"
+    ref="edit_profile"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     tabindex="-1"
@@ -86,8 +161,8 @@ export default {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit profile info</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Profile Information</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="discardEdit"></button>
         </div>
         <div class="modal-body">
           <div class="row">
@@ -99,13 +174,67 @@ export default {
               </div>
             </div>
             <div class="col-8">
-              
+              <!-- <form id="edit_prof_form" name="edit_prof_form" @submit.prevent="submit"> -->
+              <!-- <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Email</span>
+                <input class="form-control"  aria-label="Username" aria-describedby="basic-addon1" disabled />
+              </div> -->
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" v-model="userEmail" id="floatingInput" disabled />
+                <label for="floatingInput">Email address</label>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6" style="padding-right: 5px">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      name="firstName"
+                      v-model="editedFName"
+                      id="fname"
+                      class="form-control shadow-none"
+                      :class="{ inputError: fNameErr }"
+                      placeholder="First Name"
+                      autocomplete="nope" />
+                    <label for="firstName">First Name</label>
+                  </div>
+                </div>
+                <div class="col-6" style="padding-left: 5px">
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      name="lastName"
+                      v-model="editedLName"
+                      id="lname"
+                      :class="{ inputError: lNameErr }"
+                      class="form-control shadow-none outline"
+                      placeholder="Last Name"
+                      autocomplete="nope" />
+                    <label for="lastName" class="">Last Name</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3" v-if="isErr">
+                <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
+                  {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-6 pe-1">
+                  <button type="button" class="btn btn_danger btn_delAccount">Delete Account</button>
+                </div>
+                <div class="col-6 ps-1">
+                  <button type="button" class="btn btn_danger btn_changePwd">Change Password</button>
+                </div>
+              </div>
+              <!-- </form> -->
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
+          <button type="button" class="btn btn_delAccount" data-bs-dismiss="modal" @click="discardEdit">Discard and Close</button>
+          <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!validUpdate" data-bs-dismiss="modal">
+            Update Information
+          </button>
         </div>
       </div>
     </div>
@@ -119,7 +248,6 @@ export default {
 .profile_info {
   margin: auto;
   position: relative;
-  display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px 20px 20px 0px;
@@ -152,11 +280,10 @@ export default {
   font-weight: 500;
   background-color: rgb(220, 220, 220);
 }
-#profile_analyse {
-  background-color: rgb(43, 137, 226);
-}
+
 .modal-content {
   width: 650px;
+  height: 500px;
   margin: auto;
 }
 .modal-body {
@@ -176,5 +303,55 @@ export default {
   aspect-ratio: 1/1;
   width: 150px;
   border-radius: 50%;
+}
+
+.btn_danger {
+  width: 100%;
+  border-radius: 0.75rem;
+  box-shadow: rgb(0 0 0 / 20%) 2px 2px 7px 0;
+  transition: all 0.3s;
+}
+.btn_danger:hover {
+  transform: scale(1.03);
+}
+.btn_changePwd {
+  background-color: #ffdba4;
+  border: 2px solid #d1b386;
+}
+
+.btn_delAccount {
+  background-color: #ff7878;
+  border: 2px solid #d65353;
+}
+
+.total_notes {
+  margin-left: 10px;
+  margin-right: 10px;
+  background-color: #b9f8c5;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-footer {
+  justify-content: space-around;
+}
+.modal-footer button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  max-width: 270px;
+  transition: all 0.3s;
+}
+.modal-footer button:hover {
+  transform: scale(1.03);
+}
+.btn_saveChange {
+  background-color: #b9f8c5;
+  border: 2px solid #85d193;
+}
+.inputError {
+  box-shadow: #ff7878 0 0 3px 3px !important;
 }
 </style>
