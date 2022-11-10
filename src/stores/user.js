@@ -43,6 +43,10 @@ export const useUserStore = defineStore('user', {
         }
       }
     },
+    async changePass(newPassword) {
+      const payload = { password: newPassword }
+      return await AccountService.updateUserInfo(this.user.email, payload)
+    },
     async getUserNotes(email) {
       this.notes = { pending: [], doing: [], done: [] }
       const userNotes = await NoteService.getUserNotes(email)

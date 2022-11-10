@@ -2,8 +2,11 @@
 import axios from 'axios'
 import router from '@/routers'
 import { useUserStore } from '@/stores/user'
-
+import EditModal from '@/components/EditProfileModal.vue'
 export default {
+  components: {
+    EditModal
+  },
   setup() {
     const userStore = useUserStore()
     return {
@@ -17,7 +20,9 @@ export default {
       profilePic: '',
       userName: '',
       userEmail: '',
-      searchMsg: ''
+      searchMsg: '',
+      dropPage: 'main',
+      editModel_title: ''
     }
   },
   methods: {
@@ -56,6 +61,24 @@ export default {
     },
     gotoProfile() {
       router.push('/profile')
+    },
+    toggleSetting() {
+      this.dropPage = 'settings'
+    },
+    goBackMain() {
+      this.dropPage = 'main'
+    },
+    toggle_pwdModal() {
+      this.editModel_title = 'Change Password'
+      $(this.$refs.edit_passDel).modal('show')
+      this.goBackMain()
+    },
+    togglePCModal() {
+      $(this.$refs.edit_passDel).modal('hide')
+      $(this.$refs.changePassSuccess).modal('show')
+    },
+    triggerReload() {
+      this.$router.go({ name: 'profile' })
     }
   },
   async created() {
@@ -64,14 +87,9 @@ export default {
       this.getQuote()
     }, 20000)
     this.getUserInfo()
+    this.dropPage = 'main'
   },
-  watch: {
-    searchMsg: async function (message) {
-      if (message) {
-        const result = await this.userStore.findByKeyword(message)
-      }
-    }
-  }
+  watch: {}
 }
 </script>
 <template>
@@ -112,48 +130,83 @@ export default {
           <li>
             <div class="dropdown">
               <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
-              <ul class="dropdown-menu dropdown-menu-end" style="width: 350px; border-radius: 0.75rem" id="profileDropdown">
-                <li>
-                  <button class="dropdown-item profile_myprofile" type="button" @click="gotoProfile">
-                    <img :src="profilePic" alt="..." width="40" height="40" class="rounded-circle" data-bs-toggle="dropdown" aria-expanded="false" />
-                    <div style="float: left; clear: left">
-                      <span class="profile_userName">{{ userName }} </span>
-                      <span class="profile_userEmail">{{ userStore.user.email }}</span>
+              <ul class="dropdown-menu dropdown-menu-end" id="dropDownMain">
+                <div v-if="dropPage == 'main'">
+                  <li>
+                    <button class="dropdown-item profile_myprofile" type="button" @click="gotoProfile">
+                      <img
+                        :src="profilePic"
+                        alt="..."
+                        width="40"
+                        height="40"
+                        class="rounded-circle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false" />
+                      <div style="float: left; clear: left">
+                        <span class="profile_userName">{{ userName }} </span>
+                        <span class="profile_userEmail">{{ userStore.user.email }}</span>
+                      </div>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button" @click.stop="toggleSetting">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-gear profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Settings </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-circle-question profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Help </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-message profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Send Feedbacks </span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button" @click="logout">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-right-from-bracket profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Log Out </span>
+                    </button>
+                  </li>
+                </div>
+                <div v-if="dropPage == 'settings'">
+                  <li>
+                    <div class="dropDown_ctn">
+                      <button class="back_iconCover" type="button" @click.stop="goBackMain">
+                        <i class="fa-solid fa-arrow-left profile_icon"></i>
+                      </button>
+                      <span class="dropDown_ctnTitle">Settings</span>
                     </div>
-                  </button>
-                </li>
-                <li>
-                  <button class="dropdown-item profile_btn" type="button">
-                    <span class="icon_cover">
-                      <i class="fa-solid fa-gear profile_icon"></i>
-                    </span>
-                    <span class="profile_span">Settings </span>
-                  </button>
-                </li>
-                <li>
-                  <button class="dropdown-item profile_btn" type="button">
-                    <span class="icon_cover">
-                      <i class="fa-solid fa-circle-question profile_icon"></i>
-                    </span>
-                    <span class="profile_span">Help </span>
-                  </button>
-                </li>
-                <li>
-                  <button class="dropdown-item profile_btn" type="button">
-                    <span class="icon_cover">
-                      <i class="fa-solid fa-message profile_icon"></i>
-                    </span>
-                    <span class="profile_span">Send Feedbacks </span>
-                  </button>
-                </li>
-                <li>
-                  <button class="dropdown-item profile_btn" type="button" @click="logout">
-                    <span class="icon_cover">
-                      <i class="fa-solid fa-right-from-bracket profile_icon"></i>
-                    </span>
-                    <span class="profile_span">Log Out </span>
-                  </button>
-                </li>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button" @click="toggle_pwdModal">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-lock profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Change Password</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item profile_btn" type="button" @click="togglePCModal">
+                      <span class="icon_cover">
+                        <i class="fa-solid fa-trash profile_icon"></i>
+                      </span>
+                      <span class="profile_span">Delete Account</span>
+                    </button>
+                  </li>
+                </div>
               </ul>
             </div>
           </li>
@@ -163,6 +216,45 @@ export default {
         </ul>
       </div>
     </div>
+    <!-- Modal edit account info such as change password and delete -->
+    <div
+      class="modal fade modal-lg"
+      id="edit_passDel"
+      ref="edit_passDel"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true">
+      <EditModal :modal-title="editModel_title" @password-changed="togglePCModal"></EditModal>
+    </div>
+    <!-- End of Modal edit account info such as change password and delete -->
+    <!-- Change Pass success Modal -->
+    <!-- Button trigger modal -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="changePassSuccess" ref="changePassSuccess" tabindex="-1" aria-labelledby="passChanged" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #b2e5fb">
+            <h1 class="modal-title fs-5" id="passChanged">Your password was changed</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="font-weight: 500; font-size: 18px">
+            <p class="ps-3 pt-2">
+              We are about to lift off. <br />
+              Do you want to stay signed in ?
+            </p>
+          </div>
+          <div class="modal-footer modal_passChange-footer">
+            <button type="button" class="btn btn_logout" data-bs-dismiss="modal" @click="logout">Log out</button>
+            <button type="button" class="btn btn_stayin" @click="triggerReload">Stay signed in</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End of Change Pass success Modal -->
   </nav>
 </template>
 
@@ -185,11 +277,10 @@ input.empty {
   width: 350px;
   border-radius: 1rem;
 }
-/* .search_btn {
-  width: 80px;
-  background-color: #c8ffd4;
-  font-weight: 500;
-} */
+.dropdown-menu {
+  width: 350px;
+  border-radius: 0.75rem;
+}
 .profile_myprofile {
   height: 80px;
   display: flex;
@@ -203,7 +294,23 @@ input.empty {
   display: flex;
   align-items: center;
   height: 50px;
+
   margin-bottom: 10px;
+}
+
+.dropDown_ctn {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-bottom: 1px solid rgb(0 0 0 / 30%);
+  margin-bottom: 20px;
+}
+.dropDown_ctnTitle {
+  font-size: 26px;
+  font-weight: bold;
+  padding-left: 20px;
 }
 .profile_icon {
   font-size: 24px;
@@ -215,6 +322,17 @@ input.empty {
   padding: 7px;
   border-radius: 50%;
   margin-right: 20px;
+}
+.back_iconCover {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 50% !important;
+  border: none;
+  background-color: white;
+}
+.back_iconCover:hover {
+  background-color: rgb(220, 220, 220);
 }
 .profile_userEmail {
   font-size: 14px;
@@ -233,14 +351,29 @@ input.empty {
 .profile_span {
   font-weight: 500;
 }
-#profileDropdown li {
+#dropDownMain li {
   padding-left: 15px;
   padding-right: 15px;
 }
-#profileDropdown li button {
+#dropDownMain li button {
   border-radius: 0.5rem;
 }
-#profileDropdown li button:hover {
+#dropDownMain li button:hover {
   background-color: rgb(230, 230, 230);
+}
+.modal_passChange-footer {
+  display: flex;
+  justify-content: center;
+}
+.modal_passChange-footer button {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 500;
+}
+.btn_logout {
+  background-color: #f1f1ae;
+}
+.btn_stayin {
+  background-color: #b9f8c5;
 }
 </style>

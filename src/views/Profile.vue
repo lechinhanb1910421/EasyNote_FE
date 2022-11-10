@@ -2,6 +2,8 @@
 import router from '@/routers'
 import AccountService from '@/services/account.service'
 import { useUserStore } from '@/stores/user'
+import axios from 'axios'
+
 export default {
   data() {
     return {
@@ -16,7 +18,8 @@ export default {
       isErr: false,
       fNameErr: false,
       lNameErr: false,
-      validUpdate: false
+      validUpdate: false,
+      isMainPage: true
     }
   },
   setup() {
@@ -76,12 +79,17 @@ export default {
         this.getUserInfo()
         this.$router.go({ name: 'profile' })
       } catch (error) {}
+    },
+    showPassModal() {
+      this.isMainPage = false
+    },
+    showMainModal() {
+      this.isMainPage = true
     }
   },
   async created() {
     await this.getUser()
     this.getUserInfo()
-   
   },
 
   watch: {
@@ -137,7 +145,7 @@ export default {
     </div>
     <div class="row">
       <div id="" class="col-4">
-        <div class="total_notes">Show total notes</div>
+        <div class="total_notes"></div>
       </div>
       <div id="" class="col-4">
         <div class="total_notes">Show total notes done</div>
@@ -174,44 +182,60 @@ export default {
               </div>
             </div>
             <div class="col-8">
-              <!-- <form id="edit_prof_form" name="edit_prof_form" @submit.prevent="submit"> -->
-              <!-- <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1">Email</span>
-                <input class="form-control"  aria-label="Username" aria-describedby="basic-addon1" disabled />
-              </div> -->
-              <div class="form-floating mb-3">
-                <input type="email" class="form-control" v-model="userEmail" id="floatingInput" disabled />
-                <label for="floatingInput">Email address</label>
+              <div class="form-floating mb-2 row">
+                <input type="email" class="form-control" v-model="userEmail" id="email" disabled />
+                <label for="email">Email address</label>
               </div>
-              <div class="row mb-3">
-                <div class="col-6" style="padding-right: 5px">
-                  <div class="form-floating">
-                    <input
-                      type="text"
-                      name="firstName"
-                      v-model="editedFName"
-                      id="fname"
-                      class="form-control shadow-none"
-                      :class="{ inputError: fNameErr }"
-                      placeholder="First Name"
-                      autocomplete="nope" />
-                    <label for="firstName">First Name</label>
-                  </div>
+              <div class="form-floating mb-2 row">
+                <input
+                  type="text"
+                  name="firstName"
+                  v-model="editedFName"
+                  id="fname"
+                  class="form-control shadow-none"
+                  :class="{ inputError: fNameErr }"
+                  placeholder="First Name"
+                  autocomplete="nope" />
+                <label for="firstName">First Name</label>
+              </div>
+
+              <div class="form-floating row mb-2">
+                <input
+                  type="text"
+                  name="lastName"
+                  v-model="editedLName"
+                  id="lname"
+                  :class="{ inputError: lNameErr }"
+                  class="form-control shadow-none outline"
+                  placeholder="Last Name"
+                  autocomplete="nope" />
+                <label for="lastName" class="">Last Name</label>
+              </div>
+              <div class="row mb-3" v-if="isErr">
+                <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
+                  {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="col-6" style="padding-left: 5px">
-                  <div class="form-floating">
-                    <input
-                      type="text"
-                      name="lastName"
-                      v-model="editedLName"
-                      id="lname"
-                      :class="{ inputError: lNameErr }"
-                      class="form-control shadow-none outline"
-                      placeholder="Last Name"
-                      autocomplete="nope" />
-                    <label for="lastName" class="">Last Name</label>
-                  </div>
+              </div>
+              <!-- <div class="row mb-2">
+                <div class="col-6 pe-1">
+                  <button type="button" class="btn btn_danger btn_delAccount">Delete Account</button>
                 </div>
+                <div class="col-6 ps-1">
+                  <button type="button" class="btn btn_danger btn_changePwd" @click="showPassModal">Change Password</button>
+                </div>
+              </div> -->
+            </div>
+            <div class="col-8" v-if="!isMainPage">
+              <div>
+                <h5>Change EasyNote Password</h5>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="changePass" />
+                <label for="changePass">New Password</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="passConfirm" />
+                <label for="passConfirm">Comfirm Password</label>
               </div>
               <div class="row mb-3" v-if="isErr">
                 <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
@@ -220,10 +244,10 @@ export default {
               </div>
               <div class="row mb-2">
                 <div class="col-6 pe-1">
-                  <button type="button" class="btn btn_danger btn_delAccount">Delete Account</button>
+                  <button type="button" class="btn btn_danger btn_delAccount" @click="showMainModal">Discard Change</button>
                 </div>
                 <div class="col-6 ps-1">
-                  <button type="button" class="btn btn_danger btn_changePwd">Change Password</button>
+                  <button type="button" class="btn btn_danger btn_changePwd">Submit and Log Out</button>
                 </div>
               </div>
               <!-- </form> -->
@@ -283,8 +307,9 @@ export default {
 
 .modal-content {
   width: 650px;
-  height: 500px;
+  height: 400px;
   margin: auto;
+  background-color: #f8ede3;
 }
 .modal-body {
   margin: 20px;
@@ -315,8 +340,8 @@ export default {
   transform: scale(1.03);
 }
 .btn_changePwd {
-  background-color: #ffdba4;
-  border: 2px solid #d1b386;
+  background-color: #b2e5fb;
+  border: 2px solid #93cae1;
 }
 
 .btn_delAccount {
@@ -333,8 +358,12 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.modal-header {
+  background-color: #dfd3c3;
+}
 .modal-footer {
   justify-content: space-around;
+  background-color: #b19c8f;
 }
 .modal-footer button {
   flex: 1;

@@ -29,6 +29,7 @@ class AccountService {
   async updateUserInfo(email, payload) {
     return (await this.api.patch(`/${email}`, payload)).data
   }
+
 }
 
 export default new AccountService()
