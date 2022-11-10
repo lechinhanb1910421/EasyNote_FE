@@ -2,10 +2,12 @@
 import axios from 'axios'
 import router from '@/routers'
 import { useUserStore } from '@/stores/user'
-import EditModal from '@/components/EditProfileModal.vue'
+import EditPasswordModal from '@/components/EditPasswordModal.vue'
+import DeleteAccountModal from '@/components/DeleteAccountModal.vue'
 export default {
   components: {
-    EditModal
+    EditPasswordModal,
+    DeleteAccountModal
   },
   setup() {
     const userStore = useUserStore()
@@ -70,15 +72,24 @@ export default {
     },
     toggle_pwdModal() {
       this.editModel_title = 'Change Password'
-      $(this.$refs.edit_passDel).modal('show')
+      $(this.$refs.editPassModal).modal('show')
+      this.goBackMain()
+    },
+    toggle_delAccModal() {
+      this.editModel_title = 'Delete Account'
+      $(this.$refs.delAccModal).modal('show')
       this.goBackMain()
     },
     togglePCModal() {
-      $(this.$refs.edit_passDel).modal('hide')
+      $(this.$refs.editPassModal).modal('hide')
       $(this.$refs.changePassSuccess).modal('show')
     },
     triggerReload() {
       this.$router.go({ name: 'profile' })
+    },
+    farewell() {
+      $(this.$refs.delAccModal).modal('hide')
+      this.logout()
     }
   },
   async created() {
@@ -199,7 +210,7 @@ export default {
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item profile_btn" type="button" @click="togglePCModal">
+                    <button class="dropdown-item profile_btn" type="button" @click="toggle_delAccModal">
                       <span class="icon_cover">
                         <i class="fa-solid fa-trash profile_icon"></i>
                       </span>
@@ -219,14 +230,25 @@ export default {
     <!-- Modal edit account info such as change password and delete -->
     <div
       class="modal fade modal-lg"
-      id="edit_passDel"
-      ref="edit_passDel"
+      id="editPassModal"
+      ref="editPassModal"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true">
-      <EditModal :modal-title="editModel_title" @password-changed="togglePCModal"></EditModal>
+      <EditPasswordModal :modal-title="editModel_title" @password-changed="togglePCModal"></EditPasswordModal>
+    </div>
+    <div
+      class="modal fade modal-lg"
+      id="delAccModal"
+      ref="delAccModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true">
+      <DeleteAccountModal :modal-title="editModel_title" @acc-deleted="farewell"></DeleteAccountModal>
     </div>
     <!-- End of Modal edit account info such as change password and delete -->
     <!-- Change Pass success Modal -->

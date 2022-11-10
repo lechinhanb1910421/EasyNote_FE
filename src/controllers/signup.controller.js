@@ -99,6 +99,7 @@ export default {
           lastName: this.lastName
         })
         this.userName = result.account.firstName + ' ' + result.account.lastName
+        this.resetFormInfo()
         this.showConfirmModal()
       } catch (error) {
         if (error.response) {
@@ -139,9 +140,5 @@ export default {
     this.password = ''
     this.confirmPassword = ''
   },
-  mounted() {
-    // $('#signUpModal').on('show.bs.modal', function (e) {
-    //   this.$parent.resetFormInfo()
-    // })
-  }
+  mounted() {}
 }

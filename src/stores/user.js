@@ -125,6 +125,11 @@ export const useUserStore = defineStore('user', {
         await saveUser(res.firstName, res.lastName, res.profilePic)
         await this.getUserNotes(this.user.email)
       } catch (error) {}
+    },
+    async deleteAccount(email) {
+      try {
+        return await AccountService.delete(email)
+      } catch (error) {}
     }
   }
 })

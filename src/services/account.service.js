@@ -23,13 +23,12 @@ class AccountService {
   async createAccount(payload) {
     return (await this.api.post('/register', payload)).data
   }
-  // async getNotes(email) {
-  //   return (await this.api.get('/notes', payload)).data
-  // }
   async updateUserInfo(email, payload) {
     return (await this.api.patch(`/${email}`, payload)).data
   }
-
+  async delete(email) {
+    return (await this.api.delete(`/${email}`)).data
+  }
 }
 
 export default new AccountService()

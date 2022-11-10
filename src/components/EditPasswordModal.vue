@@ -17,7 +17,7 @@ export default {
     return {
       isErr: false,
       isAuth: false,
-      errorMsg: 'nothing is wrong',
+      errorMsg: '',
       authPass: '',
       newPass: '',
       confNewPass: '',
@@ -195,27 +195,7 @@ export default {
   font-weight: 500;
   font-size: 18px;
 }
-.modal-footer {
-  display: block;
-  background-color: #b19c8f;
-}
 
-.modal-footer button {
-  flex: 1;
-  margin-left: 7px;
-  margin-right: 7px;
-  max-width: 260px;
-  font-weight: 500;
-  font-size: 14px;
-  width: 50%;
-  color: black;
-  transition: transform 0.2s;
-  box-shadow: rgb(0 0 0 / 30%) 2px 2px 6px 0;
-}
-
-.modal-footer button:active {
-  background-color: #9d5353;
-}
 
 button:hover {
   transform: scale(1.03);
