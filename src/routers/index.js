@@ -3,6 +3,7 @@ import DashBoard from '@/views/DashBoard.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import Forgot from '@/components/Forgot.vue'
 import Profile from '@/views/Profile.vue'
+import FeedBack from '@/views/FeedBack.vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 const routes = [
@@ -38,6 +39,14 @@ const routes = [
     components: {
       Header: Header,
       mainBody: Profile,
+      Footer: Footer
+    }
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    components: {
+      mainBody: FeedBack,
       Footer: Footer
     }
   }

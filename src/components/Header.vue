@@ -176,12 +176,14 @@ export default {
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item profile_btn" type="button">
-                      <span class="icon_cover">
-                        <i class="fa-solid fa-message profile_icon"></i>
-                      </span>
-                      <span class="profile_span">Send Feedbacks </span>
-                    </button>
+                    <router-link to="/feedback">
+                      <button class="dropdown-item profile_btn" type="button">
+                        <span class="icon_cover">
+                          <i class="fa-solid fa-message profile_icon"></i>
+                        </span>
+                        <span class="profile_span">Send Feedbacks </span>
+                      </button>
+                    </router-link>
                   </li>
                   <li>
                     <button class="dropdown-item profile_btn" type="button" @click="logout">

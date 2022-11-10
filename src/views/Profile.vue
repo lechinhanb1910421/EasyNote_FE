@@ -2,7 +2,6 @@
 import router from '@/routers'
 import AccountService from '@/services/account.service'
 import { useUserStore } from '@/stores/user'
-import axios from 'axios'
 
 export default {
   data() {
