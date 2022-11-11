@@ -1,7 +1,4 @@
 <script>
-import NoteTodo from '@/components/NoteTodo.vue'
-import NoteDoing from '@/components/NoteDoing.vue'
-import NoteDone from '@/components/NoteDone.vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import { useUserStore } from '@/stores/user'
@@ -13,9 +10,6 @@ import router from '@/routers'
 
 export default {
   components: {
-    NoteTodo,
-    NoteDoing,
-    NoteDone,
     Header,
     Footer,
     NotePanel,

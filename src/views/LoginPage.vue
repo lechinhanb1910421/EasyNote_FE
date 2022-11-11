@@ -8,7 +8,9 @@ import { useUserStore } from '@/stores/user'
 export default {
   components: {
     LogInContainer,
-    SignUpContainer,Header,Footer
+    SignUpContainer,
+    Header,
+    Footer
   },
   emits: ['accountCreated'],
   setup() {
@@ -47,7 +49,6 @@ export default {
 }
 </script>
 <template>
-  <Header></Header>
   <div class="container-fluid">
     <div id="login_main" class="container">
       <div class="row text-center">

@@ -4,7 +4,6 @@ import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 import EditPasswordModal from '@/components/EditPasswordModal.vue'
 import DeleteAccountModal from '@/components/DeleteAccountModal.vue'
-import NotePanel from '@/components/EditNoteModal.vue'
 
 export default {
   emits: {
@@ -13,8 +12,7 @@ export default {
   },
   components: {
     EditPasswordModal,
-    DeleteAccountModal,
-    NotePanel
+    DeleteAccountModal
   },
   setup() {
     const userStore = useUserStore()
@@ -38,11 +36,6 @@ export default {
   },
   watch: {
     async searchMsg(val, oldVal) {
-      if (val == '' || val == null) {
-        this.searchedNotes = []
-        this.isSearching = false
-        return
-      }
       await this.searchForNotes(val)
     }
   },
@@ -112,16 +105,17 @@ export default {
     },
     async searchForNotes(keyword) {
       if (keyword == null || keyword == '') {
+        this.isSearching = false
         return
       }
       this.searchedNotes = []
+      this.isSearching = true
       try {
         const documents = await this.userStore.searchNotes(keyword)
         if (Object.keys(documents).length > 0) {
           documents.forEach((note) => {
             this.searchedNotes.push(note)
           })
-          this.isSearching = true
         } else {
           this.searchedNotes = []
         }
@@ -174,7 +168,7 @@ export default {
             @click="searchForNotes(searchMsg)" />
         </div>
         <div class="search_result" id="search_result" v-if="isSearching" v-click-outside="hideSearchRes">
-          <div class="search_result_ctn" v-if="searchedNotes.length" @focus="hideSearchRes">
+          <div class="search_result_ctn" v-if="searchedNotes.length">
             <div v-for="(item, idx) in searchedNotes" @click="showNote(item)">
               <button class="noteSumary_ctn" type="button">
                 <div style="float: left; clear: left">
@@ -184,7 +178,7 @@ export default {
               </button>
             </div>
           </div>
-          <div class="search_result_ctn" v-if="searchedNotes.length == 0">
+          <div class="search_result_ctn" v-if="searchedNotes.length == 0 || !searchedNotes.length">
             <button class="noteSumary_ctn" type="button" style="height: 50px">
               <div style="float: left; clear: left">
                 <span class="ps-3"><strong>Note not found</strong> </span>
