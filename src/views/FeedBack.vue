@@ -1,5 +1,6 @@
 <script>
-// import router from '@/routers'
+import router from '@/routers'
+import AccountService from '@/services/account.service'
 import { useUserStore } from '@/stores/user'
 export default {
   setup() {
@@ -15,17 +16,38 @@ export default {
     }
   },
   methods: {
+    async getUser() {
+      const token = localStorage.getItem('auth_token')
+      try {
+        if (token) {
+          const token_user = await AccountService.getUser(token)
+          if (token_user) {
+            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+            this.userStore.getUserNotes(token_user.email)
+          } else {
+            throw new Error('Can not get user with this token')
+          }
+        } else {
+          throw new Error('There is valid no token')
+        }
+      } catch (error) {
+        console.log(error)
+        router.push('/login')
+      }
+    },
     useAnoEmail() {
-      this.email = 'anonymous@mail.com'
-      console.log(this.email)
+      this.email = 'anonymous@email.com'
+      this.isDefaultEmail = false
+    },
+    useUserEmail() {
+      this.email = this.userStore.user.email
+      this.isDefaultEmail = true
     }
   },
-  created() {
-    if (!this.userStore.user.email) {
-      this.email = 'anonymous@mail.com'
-    } else {
-      this.email = this.userStore.user.email
-    }
+  async created() {
+    await this.getUser()
+    this.email = this.userStore.user.email
+    this.isDefaultEmail = true
   }
 }
 </script>
@@ -49,10 +71,24 @@ export default {
                   <input type="text" class="form-control" :placeholder="email" aria-label="Email" aria-describedby="email" disabled />
                 </div>
                 <div class="mb-3">
-                  <button type="button" class="btn_changeEmail" @click="useAnoEmail">Send feed back as anonymous</button>
+                  <button type="button" class="btn btn_changeEmail btn_anoEmail" v-if="isDefaultEmail" @click="useAnoEmail">
+                    Send feed back as anonymous
+                  </button>
+                  <button type="button" class="btn btn_changeEmail btn_defEmail" v-if="!isDefaultEmail" @click="useUserEmail">
+                    Send feedback as {{ userStore.user.email }}
+                  </button>
                 </div>
                 <div class="mb-3">
-                  <label for="feedbackDetail" class="form-label">More Info:</label>
+                  <label for="feedbackFeild" class="form-label ps-3 feedback_labels">Feedback category:</label>
+                  <select class="form-select" aria-label="feedback select" id="feedbackFeild">
+                    <option class="toption" disabled selected hidden>Select your feedback category</option>
+                    <option value="1">Suggestions</option>
+                    <option value="2">Report an issue</option>
+                    <option value="3">Compliment</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="feedbackDetail" class="form-label ps-3 feedback_labels"> Detail Information:</label>
                   <textarea class="form-control" id="feedbackDetail" rows="3" placeholder="Tell us more about your idea"></textarea>
                 </div>
               </form>
@@ -101,11 +137,28 @@ export default {
   font-size: 17px;
   width: 100%;
   height: 40px;
-  background-color: #f1f1ae;
+  background-color: #f1f1ae !important;
+  border: 2px solid #c7c782;
   border-radius: 0.5rem;
   box-shadow: rgb(0 0 0 / 20%) 2px 2px 7px 0px;
+  transition: all 0.3s;
+}
+.btn_anoEmail {
+  background-color: #f1f1ae !important;
+  border: 2px solid #c7c782;
+}
+.btn_defEmail {
+  background-color: #b9f8c5 !important;
+  border: 2px solid #98d6a3;
 }
 .text-left {
   margin-left: 0px;
+}
+.btn:hover {
+  transform: scale(1.02);
+}
+.feedback_labels {
+  font-weight: 500;
+  font-size: 17px;
 }
 </style>

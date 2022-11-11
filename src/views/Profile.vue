@@ -137,7 +137,7 @@ export default {
         <div class="edit_ctn">
           <button class="btn btn_editProfile" type="button" data-bs-toggle="modal" data-bs-target="#edit_profile">
             <i class="fa-solid fa-pen-to-square"></i>
-            Edit
+            Edit Profile
           </button>
         </div>
       </div>
@@ -299,7 +299,7 @@ export default {
   bottom: 20px;
 }
 .btn_editProfile {
-  width: 100px;
+  width: 160px;
   font-weight: 500;
   background-color: rgb(220, 220, 220);
 }
