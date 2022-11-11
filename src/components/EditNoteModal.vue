@@ -45,18 +45,36 @@ export default {
       this.$emit('backState')
     }
   },
-  created() {
-    this.isEditting = false
-    this.editedNote = this.noteDescrip
-    if (this.noteState == 'Doing') {
-      this.isDoing = true
-    }
-  },
-  mounted() {
-    if (this.noteState === 'Pending') {
-      this.nextStateTitle = 'Mark as Doing'
-    } else if (this.noteState === 'Doing') {
-      this.nextStateTitle = 'Mark as Done'
+  // created() {
+  //   this.isEditting = false
+  //   this.editedNote = this.noteDescrip
+  //   if (this.noteState == 'doing') {
+  //     this.isDoing = true
+  //   }
+  //   console.log('hello')
+  // },
+  // mounted() {
+  //   if (this.noteState === 'pending') {
+  //     this.nextStateTitle = 'Mark as Doing'
+  //   } else if (this.noteState === 'doing') {
+  //     this.nextStateTitle = 'Mark as Done'
+  //   }
+  //   console.log('state in edit', this.nextStateTitle)
+  // },
+  watch: {
+    noteState: function () {
+      this.isEditting = false
+      this.editedNote = this.noteDescrip
+      if (this.noteState == 'doing') {
+        this.isDoing = true
+      }
+      if (this.noteState === 'pending') {
+        this.nextStateTitle = 'Mark as Doing'
+      } else if (this.noteState === 'doing') {
+        this.nextStateTitle = 'Mark as Done'
+      } else {
+        this.nextStateTitle = ''
+      }
     }
   }
 }
@@ -114,7 +132,7 @@ export default {
   font-weight: 600;
 }
 .modal-content {
-  height: 600px;
+  height: 620px;
 }
 .modal-header {
   background-color: #dfd3c3;

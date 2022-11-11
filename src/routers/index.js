@@ -10,45 +10,54 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    components: {
-      Header: Header,
-      mainBody: DashBoard,
-      Footer: Footer
-    }
+    component: DashBoard
+    // components: {
+    //   Header: Header,
+    //   mainBody: DashBoard,
+    //   Footer: Footer
+    // }
   },
   {
     path: '/login',
     name: 'login',
-    components: {
-      mainBody: LoginPage,
-      Footer: Footer
-    }
+    component: LoginPage
+
+    // components: {
+    //   mainBody: LoginPage,
+    //   Footer: Footer
+    // }
   },
   {
     path: '/forgot',
     name: 'forgot',
-    components: {
-      Header: Header,
-      mainBody: Forgot,
-      Footer: Footer
-    }
+    component: Forgot
+
+    // components: {
+    //   Header: Header,
+    //   mainBody: Forgot,
+    //   Footer: Footer
+    // }
   },
   {
     path: '/profile',
     name: 'profile',
-    components: {
-      Header: Header,
-      mainBody: Profile,
-      Footer: Footer
-    }
+    component: Profile
+
+    // components: {
+    //   Header: Header,
+    //   mainBody: Profile,
+    //   Footer: Footer
+    // }
   },
   {
     path: '/feedback',
     name: 'feedback',
-    components: {
-      mainBody: FeedBack,
-      Footer: Footer
-    }
+    component: FeedBack
+
+    // components: {
+    //   mainBody: FeedBack,
+    //   Footer: Footer
+    // }
   }
 ]
 

@@ -1,8 +1,12 @@
-<script>
+<!-- <script>
 import { useUserStore } from '@/stores/user'
 import NotePanel from '@/components/EditNoteModal.vue'
 import AddNotePanel from '@/components/AddNoteModal.vue'
 export default {
+  emits: {
+    showNote: null,
+    addNote: null
+  },
   components: {
     NotePanel,
     AddNotePanel
@@ -25,55 +29,11 @@ export default {
     }
   },
   methods: {
-    showeditNoteModal(index) {
-      this.detailTitle = this.userNotes.notes.pending[index].title
-      this.detailDescrip = this.userNotes.notes.pending[index].description
-      this.editNoteId = this.userNotes.notes.pending[index]._id
-      this.editNoteIndex = index
-      $(this.$refs.editNoteModal).modal('show')
-    },
-    async noteChanged(note) {
-      const payload = { id: this.editNoteId, description: note }
-      const result = await this.userNotes.editNote(payload)
-
-      try {
-        if (result.message) {
-          this.detailTitle = result.note.title
-          this.detailDescrip = result.note.description
-        }
-      } catch (error) {
-        console.log('can not change note', error)
-      }
-    },
-    async deleteNote() {
-      try {
-        await this.userNotes.deleteNote(this.editNoteId)
-        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was deleted </span>'
-        this.$toast.success(message, {
-          duration: 3000
-        })
-      } catch (error) {}
-    },
-    async moveState(noteState) {
-      if (noteState == 'Pending') {
-        this.nextState = 'doing'
-      } else if (noteState == 'Doing') {
-        this.nextState = 'done'
-      }
-      const payload = { id: this.editNoteId, state: this.nextState }
-      await this.userNotes.editNote(payload)
+    showeditNoteModal(item) {
+      this.$emit('showNote', item)
     },
     toggleAddModal() {
-      $(this.$refs.addNoteModal).modal('show')
-    },
-    closeAddModal(value) {
-      $(this.$refs.addNoteModal).modal('hide')
-      if (value === 'added') {
-        const message = '<span> <i class="fa-regular fa-circle-check"></i> Note was added </span>'
-        this.$toast.success(message, {
-          duration: 3000
-        })
-      }
+      this.$emit('addNote')
     }
   },
   created() {}
@@ -99,7 +59,7 @@ export default {
       </button>
     </div>
     <div v-for="(item, idx) in userNotes.notes.pending">
-      <button class="noteSumary_ctn" type="button" @click="showeditNoteModal(idx)">
+      <button class="noteSumary_ctn" type="button" @click="showeditNoteModal(item)">
         <div style="float: left; clear: left">
           <span class="noteSumary_title">Title: {{ item.title }}</span>
           <span class="noteSumary_des">Description: {{ item.description }}</span>
@@ -107,40 +67,9 @@ export default {
       </button>
     </div>
   </div>
-  <div
-    class="modal fade modal-lg"
-    id="editNoteModal"
-    ref="editNoteModal"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true">
-    <NotePanel
-      :note-state="'Pending'"
-      :note-title="detailTitle"
-      :note-descrip="detailDescrip"
-      @note-changed="noteChanged"
-      @delete-note="deleteNote"
-      @move-state="moveState"
-      :noteId="editNoteId"></NotePanel>
-  </div>
-  <div
-    class="modal fade modal-lg"
-    id="addNoteModal"
-    ref="addNoteModal"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true">
-    <AddNotePanel @close-modal="closeAddModal"></AddNotePanel>
-  </div>
 </template>
 <style scoped>
-.modal-lg {
-  background-color: transparent;
-}
+
 #note_content {
   border-radius: 0.5rem;
   max-height: 450px;
@@ -196,4 +125,4 @@ export default {
 .noteAdd_ctn:hover i.hover_scroll {
   transform: rotate(90deg);
 }
-</style>
+</style> -->

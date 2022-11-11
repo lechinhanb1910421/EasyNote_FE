@@ -1,8 +1,11 @@
-<script>
+<!-- <script>
 import { useUserStore } from '@/stores/user'
 import NotePanel from '@/components/EditNoteModal.vue'
 import NoteService from '@/services/note.service'
 export default {
+  emits: {
+    showNote: null
+  },
   components: {
     NotePanel
   },
@@ -22,12 +25,8 @@ export default {
     }
   },
   methods: {
-    showDetailNote(index) {
-      this.detailTitle = this.userNotes.notes.done[index].title
-      this.detailDescrip = this.userNotes.notes.done[index].description
-      this.editNoteId = this.userNotes.notes.done[index]._id
-      this.editNoteIndex = index
-      $(this.$refs.detailNote).modal('show')
+    showDetailNote(item) {
+      this.$emit('showNote', item)
     },
     async noteChanged(note) {
       const payload = { note: note, id: this.editNoteId }
@@ -57,31 +56,13 @@ export default {
   </div>
   <div id="note_content">
     <div v-for="(item, idx) in userNotes.notes.done">
-      <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
+      <button class="noteSumary_ctn" type="button" @click="showDetailNote(item)">
         <div style="float: left; clear: left">
           <span class="noteSumary_title">Title: {{ item.title }}</span>
           <span class="noteSumary_des">Description: {{ item.description }}</span>
         </div>
       </button>
     </div>
-  </div>
-
-  <div
-    class="modal fade modal-lg"
-    ref="detailNote"
-    id="detailNote"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true">
-    <NotePanel
-      :note-state="'done'"
-      :note-title="detailTitle"
-      :note-descrip="detailDescrip"
-      @note-changed="noteChanged"
-      @delete-note="deleteNote"
-      :noteId="editNoteId"></NotePanel>
   </div>
 </template>
 <style scoped>
@@ -131,4 +112,4 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-</style>
+</style> -->

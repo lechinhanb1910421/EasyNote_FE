@@ -1,8 +1,11 @@
-<script>
+<!-- <script>
 import { useUserStore } from '@/stores/user'
 import NotePanel from '@/components/EditNoteModal.vue'
 import NoteService from '@/services/note.service'
 export default {
+  emits: {
+    showNote: null
+  },
   components: {
     NotePanel
   },
@@ -14,32 +17,13 @@ export default {
     }
   },
   data() {
-    return {
-      detailTitle: '',
-      detailDescrip: '',
-      editNoteId: '',
-      editNoteIndex: '',
-      nextState: ''
-    }
+    return {}
   },
   methods: {
-    showDetailNote(index) {
-      this.detailTitle = this.userNotes.notes.doing[index].title
-      this.detailDescrip = this.userNotes.notes.doing[index].description
-      this.editNoteId = this.userNotes.notes.doing[index]._id
-      this.editNoteIndex = index
-      $(this.$refs.detailNote).modal('show')
+    showDetailNote(item) {
+      this.$emit('showNote', item)
     },
-    async noteChanged(note) {
-      const payload = { note: note, id: this.editNoteId }
-      const result = await NoteService.editNote(payload)
-      try {
-        if (result.message) {
-          this.detailTitle = result.note.title
-          this.detailDescrip = result.note.description
-        }
-      } catch (error) {}
-    },
+
     async deleteNote() {
       try {
         await this.userNotes.deleteNote(this.editNoteId)
@@ -48,20 +32,6 @@ export default {
           duration: 3000
         })
       } catch (error) {}
-    },
-    async moveState(noteState) {
-      if (noteState == 'Pending') {
-        this.nextState = 'doing'
-      } else if (noteState == 'Doing') {
-        this.nextState = 'done'
-      }
-
-      const payload = { id: this.editNoteId, state: this.nextState }
-      await this.userNotes.editNote(payload)
-    },
-    async backState() {
-      const payload = { id: this.editNoteId, state: 'pending' }
-      await this.userNotes.editNote(payload)
     }
   }
 }
@@ -72,7 +42,7 @@ export default {
   </div>
   <div id="note_content">
     <div v-for="(item, idx) in userNotes.notes.doing">
-      <button class="noteSumary_ctn" type="button" @click="showDetailNote(idx)">
+      <button class="noteSumary_ctn" type="button" @click="showDetailNote(item)">
         <div style="float: left; clear: left">
           <span class="noteSumary_title">Title: {{ item.title }}</span>
           <span class="noteSumary_des">Description: {{ item.description }}</span>
@@ -80,31 +50,8 @@ export default {
       </button>
     </div>
   </div>
-
-  <div
-    class="modal fade modal-lg"
-    ref="detailNote"
-    id="detailNote"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true">
-    <NotePanel
-      :note-state="'Doing'"
-      :note-title="detailTitle"
-      :note-descrip="detailDescrip"
-      @note-changed="noteChanged"
-      @delete-note="deleteNote"
-      @move-state="moveState"
-      @back-state="backState"
-      :noteId="editNoteId"></NotePanel>
-  </div>
 </template>
 <style scoped>
-.modal-lg {
-  background-color: transparent;
-}
 #note_content {
   border-radius: 0.5rem;
   max-height: 510px;
@@ -148,4 +95,4 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-</style>
+</style> -->

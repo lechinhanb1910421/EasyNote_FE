@@ -1,12 +1,14 @@
 <script>
 import LogInContainer from '@/components/LogInContainer.vue'
 import SignUpContainer from '@/components/SignUpContainer.vue'
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 export default {
   components: {
     LogInContainer,
-    SignUpContainer
+    SignUpContainer,Header,Footer
   },
   emits: ['accountCreated'],
   setup() {
@@ -45,6 +47,7 @@ export default {
 }
 </script>
 <template>
+  <Header></Header>
   <div class="container-fluid">
     <div id="login_main" class="container">
       <div class="row text-center">
@@ -84,6 +87,7 @@ export default {
       </div>
     </div>
   </div>
+  <Footer></Footer>
 </template>
 
 <style scoped>

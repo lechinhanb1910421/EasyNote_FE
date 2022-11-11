@@ -4,10 +4,17 @@ import router from '@/routers'
 import { useUserStore } from '@/stores/user'
 import EditPasswordModal from '@/components/EditPasswordModal.vue'
 import DeleteAccountModal from '@/components/DeleteAccountModal.vue'
+import NotePanel from '@/components/EditNoteModal.vue'
+
 export default {
+  emits: {
+    noteContent: null,
+    showNote: null
+  },
   components: {
     EditPasswordModal,
-    DeleteAccountModal
+    DeleteAccountModal,
+    NotePanel
   },
   setup() {
     const userStore = useUserStore()
@@ -25,18 +32,18 @@ export default {
       searchMsg: '',
       dropPage: 'main',
       editModel_title: '',
-      searchedNotes: []
+      searchedNotes: [],
+      isSearching: false
     }
   },
   watch: {
     async searchMsg(val, oldVal) {
       if (val == '' || val == null) {
+        this.searchedNotes = []
+        this.isSearching = false
         return
       }
       await this.searchForNotes(val)
-      this.searchedNotes.forEach((note) => {
-        console.log(note)
-      })
     }
   },
   methods: {
@@ -104,6 +111,9 @@ export default {
       this.logout()
     },
     async searchForNotes(keyword) {
+      if (keyword == null || keyword == '') {
+        return
+      }
       this.searchedNotes = []
       try {
         const documents = await this.userStore.searchNotes(keyword)
@@ -111,13 +121,22 @@ export default {
           documents.forEach((note) => {
             this.searchedNotes.push(note)
           })
+          this.isSearching = true
         } else {
           this.searchedNotes = []
-          console.log('Can not file any note')
         }
       } catch (error) {}
+    },
+    hideSearchRes() {
+      this.searchedNotes = []
+      this.isSearching = false
+    },
+    async showNote(payload) {
+      this.onDisplayNote = true
+      this.$emit('showNote', payload)
     }
   },
+
   async created() {
     await this.getQuote()
     setInterval(() => {
@@ -141,17 +160,40 @@ export default {
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="d-flex">
-        <router-link to="/">
-          <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
-        </router-link>
-        <input
-          class="form-control me-2 empty header_search"
-          type="search"
-          placeholder="&#xF002; Search Note"
-          aria-label="Search"
-          v-model="searchMsg" />
+      <div class="position-relative">
+        <div class="d-flex">
+          <router-link to="/">
+            <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
+          </router-link>
+          <input
+            class="form-control me-2 empty header_search"
+            type="search"
+            placeholder="&#xF002; Search Note"
+            aria-label="Search"
+            v-model="searchMsg"
+            @click="searchForNotes(searchMsg)" />
+        </div>
+        <div class="search_result" id="search_result" v-if="isSearching" v-click-outside="hideSearchRes">
+          <div class="search_result_ctn" v-if="searchedNotes.length" @focus="hideSearchRes">
+            <div v-for="(item, idx) in searchedNotes" @click="showNote(item)">
+              <button class="noteSumary_ctn" type="button">
+                <div style="float: left; clear: left">
+                  <span class="noteSumary_title">Title: {{ item.title }}</span>
+                  <span class="noteSumary_des">Description: {{ item.description }}</span>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="search_result_ctn" v-if="searchedNotes.length == 0">
+            <button class="noteSumary_ctn" type="button" style="height: 50px">
+              <div style="float: left; clear: left">
+                <span class="ps-3"><strong>Note not found</strong> </span>
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-lg-0">
           <li class="nav-item"></li>
@@ -326,6 +368,26 @@ input.empty {
   width: 350px;
   border-radius: 1rem;
 }
+.search_result {
+  position: absolute;
+  top: 40px;
+  left: 45px;
+  background-color: rgb(0 0 0 / 60%);
+  border-radius: 0.5rem;
+  width: 400px;
+  padding-top: 5px;
+  box-shadow: rgb(0 0 0 / 20%) 2px 2px 4px 2px;
+  max-height: 400px;
+}
+.search_result_ctn {
+  padding: 3px;
+  max-height: 385px;
+  border-radius: 0.5rem;
+  overflow: scroll;
+}
+.search_result_ctn::-webkit-scrollbar {
+  display: none;
+}
 .dropdown-menu {
   width: 350px;
   border-radius: 0.75rem;
@@ -424,5 +486,41 @@ input.empty {
 }
 .btn_stayin {
   background-color: #b9f8c5;
+}
+.noteSumary_ctn {
+  border: 1px solid rgb(221, 221, 221);
+  height: 80px;
+  width: 98%;
+  margin: auto;
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  border-radius: 0.75rem;
+  background-color: rgb(240, 240, 240);
+  box-shadow: rgb(0 0 0 / 20%) 2px 2px 6px 0;
+}
+.noteSumary_title {
+  text-align: left;
+  width: 98%;
+  margin: auto;
+  font-size: 17px;
+  margin-left: 15px;
+  font-weight: bold;
+  float: left;
+  clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.noteSumary_des {
+  text-align: left;
+  font-size: 14px;
+  max-width: 300px;
+  margin-left: 15px;
+  float: left;
+  clear: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

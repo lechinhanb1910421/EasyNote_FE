@@ -2,7 +2,11 @@
 import router from '@/routers'
 import AccountService from '@/services/account.service'
 import { useUserStore } from '@/stores/user'
+import Footer from '@/components/Footer.vue'
 export default {
+  components:{
+    Footer
+  },
   setup() {
     const userStore = useUserStore()
 
@@ -182,6 +186,7 @@ export default {
     </div>
   </div>
   <!-- End of Success inform modal  -->
+  <Footer></Footer>
 </template>
 <style scoped>
 #login_main {

@@ -1,9 +1,15 @@
 <script>
 import router from '@/routers'
 import AccountService from '@/services/account.service'
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 import { useUserStore } from '@/stores/user'
 
 export default {
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       firstName: '',
@@ -124,6 +130,7 @@ export default {
 }
 </script>
 <template>
+  <Header></Header>
   <div class="container">
     <div class="row">
       <div class="col-12 mt-3 mb-3 d-flex profile_info">
@@ -262,6 +269,7 @@ export default {
       </div>
     </div>
   </div>
+  <Footer></Footer>
 </template>
 
 <style scoped>
