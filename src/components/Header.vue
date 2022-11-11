@@ -24,7 +24,19 @@ export default {
       userEmail: '',
       searchMsg: '',
       dropPage: 'main',
-      editModel_title: ''
+      editModel_title: '',
+      searchedNotes: []
+    }
+  },
+  watch: {
+    async searchMsg(val, oldVal) {
+      if (val == '' || val == null) {
+        return
+      }
+      await this.searchForNotes(val)
+      this.searchedNotes.forEach((note) => {
+        console.log(note)
+      })
     }
   },
   methods: {
@@ -90,6 +102,20 @@ export default {
     farewell() {
       $(this.$refs.delAccModal).modal('hide')
       this.logout()
+    },
+    async searchForNotes(keyword) {
+      this.searchedNotes = []
+      try {
+        const documents = await this.userStore.searchNotes(keyword)
+        if (Object.keys(documents).length > 0) {
+          documents.forEach((note) => {
+            this.searchedNotes.push(note)
+          })
+        } else {
+          this.searchedNotes = []
+          console.log('Can not file any note')
+        }
+      } catch (error) {}
     }
   },
   async created() {
@@ -99,8 +125,7 @@ export default {
     }, 20000)
     this.getUserInfo()
     this.dropPage = 'main'
-  },
-  watch: {}
+  }
 }
 </script>
 <template>
@@ -116,7 +141,7 @@ export default {
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <form class="d-flex" role="search">
+      <div class="d-flex">
         <router-link to="/">
           <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
         </router-link>
@@ -126,7 +151,7 @@ export default {
           placeholder="&#xF002; Search Note"
           aria-label="Search"
           v-model="searchMsg" />
-      </form>
+      </div>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-lg-0">
           <li class="nav-item"></li>
@@ -168,7 +193,7 @@ export default {
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item profile_btn" type="button">
+                    <button class="dropdown-item profile_btn" type="button" @click="testSearch">
                       <span class="icon_cover">
                         <i class="fa-solid fa-circle-question profile_icon"></i>
                       </span>

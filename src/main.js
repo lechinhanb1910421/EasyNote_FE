@@ -10,4 +10,5 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Toaster from '@meforma/vue-toaster'
 const pinia = createPinia()
+
 createApp(App).use(VueAxios, axios).use(pinia).use(router).use(Toaster).mount('#app')

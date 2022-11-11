@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import AccountService from '@/services/account.service'
 import NoteService from '@/services/note.service'
+import FeedbackService from '@/services/feedback.service'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -130,6 +131,28 @@ export const useUserStore = defineStore('user', {
       try {
         return await AccountService.delete(email)
       } catch (error) {}
+    },
+    async addFeedback(payload) {
+      return await FeedbackService.addFeedback(payload)
+    },
+    async searchNotes(keyword) {
+      let documents = []
+      this.notes.pending.forEach((note) => {
+        if (note.title.toLowerCase().includes(keyword)) {
+          documents.push(note)
+        }
+      })
+      this.notes.doing.forEach((note) => {
+        if (note.title.toLowerCase().includes(keyword)) {
+          documents.push(note)
+        }
+      })
+      this.notes.done.forEach((note) => {
+        if (note.title.toLowerCase().includes(keyword)) {
+          documents.push(note)
+        }
+      })
+      return documents
     }
   }
 })

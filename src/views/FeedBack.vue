@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/user'
 export default {
   setup() {
     const userStore = useUserStore()
+
     return {
       userStore
     }
@@ -12,7 +13,11 @@ export default {
   data() {
     return {
       email: '',
-      isDefaultEmail: true
+      isDefaultEmail: true,
+      selected: 'Please select a category',
+      detailInfo: '',
+      isErr: false,
+      errorMsg: ''
     }
   },
   methods: {
@@ -31,7 +36,6 @@ export default {
           throw new Error('There is valid no token')
         }
       } catch (error) {
-        console.log(error)
         router.push('/login')
       }
     },
@@ -42,12 +46,49 @@ export default {
     useUserEmail() {
       this.email = this.userStore.user.email
       this.isDefaultEmail = true
-    }
+    },
+    async submitFeedback() {
+      if (this.selected === 'Please select a category') {
+        this.errorMsg = 'Please select a category'
+        this.isErr = true
+        return
+      }
+      if (this.detailInfo == null || this.detailInfo == '') {
+        this.errorMsg = 'Please give us a few detail information about'
+        this.isErr = true
+        return
+      }
+      const payload = {
+        email: this.email,
+        description: this.detailInfo,
+        category: this.selected
+      }
+      await this.userStore.addFeedback(payload)
+      $(this.$refs.feedbackModal).modal('show')
+      this.isDefaultEmail = true
+      this.selected = 'Please select a category'
+      this.detailInfo = ''
+    },
+    goHome() {
+      router.push({ name: 'home' })
+    },
+    
   },
   async created() {
     await this.getUser()
     this.email = this.userStore.user.email
     this.isDefaultEmail = true
+    
+  },
+  watch: {
+    selected: function () {
+      this.errorMsg = ''
+      this.isErr = false
+    },
+    detailInfo: function () {
+      this.errorMsg = ''
+      this.isErr = false
+    }
   }
 }
 </script>
@@ -55,18 +96,15 @@ export default {
   <div class="container-fluid">
     <div id="login_main" class="container">
       <div class="row m-auto">
-        <div class="col-12 text-center">
-          <h2 id="login_title">EasyNote</h2>
-        </div>
-        <div class="col-10 m-auto mt-3">
+        <div class="col-10 m-auto mt-5">
           <div class="row feedback_ctn">
-            <div class="col-12 mb-4 text-center">
+            <div class="col-12 mb-3 text-center">
               <h3>Send feedback to EasyNote</h3>
               <hr style="width: 85%; margin: auto" class="mt-3" />
             </div>
             <div class="col-10 m-auto d-block">
               <form ref="feedbackForm" @submit.prevent="submit">
-                <div class="input-group mb-3">
+                <div class="input-group mb-2">
                   <span class="input-group-text" id="email">Email</span>
                   <input type="text" class="form-control" :placeholder="email" aria-label="Email" aria-describedby="email" disabled />
                 </div>
@@ -78,30 +116,72 @@ export default {
                     Send feedback as {{ userStore.user.email }}
                   </button>
                 </div>
-                <div class="mb-3">
-                  <label for="feedbackFeild" class="form-label ps-3 feedback_labels">Feedback category:</label>
-                  <select class="form-select" aria-label="feedback select" id="feedbackFeild">
-                    <option class="toption" disabled selected hidden>Select your feedback category</option>
-                    <option value="1">Suggestions</option>
-                    <option value="2">Report an issue</option>
-                    <option value="3">Compliment</option>
+                <div class="mb-2 input-group">
+                  <span for="feedbackFeild" class="input-group-text feedback_labels">Feedback category:</span>
+                  <select v-model="selected" class="form-select" aria-label="feedback select" id="feedbackFeild">
+                    <option disabled selected hidden>Please select a category</option>
+                    <option value="Suggestions">Suggestions</option>
+                    <option value="Report an issue">Report an issue</option>
+                    <option value="Compliments">Compliments</option>
+                    <option value="Others">Others</option>
                   </select>
                 </div>
+
                 <div class="mb-3">
                   <label for="feedbackDetail" class="form-label ps-3 feedback_labels"> Detail Information:</label>
-                  <textarea class="form-control" id="feedbackDetail" rows="3" placeholder="Tell us more about your idea"></textarea>
+                  <textarea
+                    class="form-control"
+                    id="feedbackDetail"
+                    rows="7"
+                    placeholder="Tell us more about your idea"
+                    maxlength="1024"
+                    v-model="detailInfo"></textarea>
+                </div>
+                <div id="error_box" class="mb-3" v-if="isErr">
+                  <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert">
+                    {{ errorMsg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
                 </div>
               </form>
+            </div>
+            <div class="col-10 m-auto d-flex justify-content-between align-items-center">
+              <button type="button" class="btn btn_control btn_anoEmail">
+                <router-link to="/" style="color: black"> Back to Dashboard </router-link>
+              </button>
+              <button type="button" class="btn btn_control btn_sendFeedback" @click="submitFeedback">Send Feedback</button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- <div class="row mt-3">
-        <div class="col-12"></div>
-      </div> -->
     </div>
   </div>
+  <!-- Success inform modal  -->
+  <div
+    class="modal fade"
+    id="feedbackModal"
+    ref="feedbackModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="feedbackTitle"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="feedbackTitle">Thank you for your support!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <span class="modal_text">Your feedback has been sent.</span>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="button" class="btn btn_sendFeedback btn_control" data-bs-dismiss="modal" @click="goHome">Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Success inform modal  -->
 </template>
 <style scoped>
 #login_main {
@@ -125,9 +205,9 @@ export default {
   display: block;
   margin: auto;
   width: 600px;
+  height: 610px;
   padding-top: 20px;
   background-color: white;
-  height: 500px;
   border-radius: 1rem;
   border: 2px solid rgb(0 0 0 / 15%);
   box-shadow: rgb(0 0 0 / 20%) 3px 3px 9px 2px;
@@ -148,11 +228,11 @@ export default {
   border: 2px solid #c7c782;
 }
 .btn_defEmail {
-  background-color: #b9f8c5 !important;
-  border: 2px solid #98d6a3;
+  background-color: #b2e5fb !important;
+  border: 2px solid #94cbe2;
 }
-.text-left {
-  margin-left: 0px;
+#feedbackDetail {
+  resize: none;
 }
 .btn:hover {
   transform: scale(1.02);
@@ -160,5 +240,14 @@ export default {
 .feedback_labels {
   font-weight: 500;
   font-size: 17px;
+}
+.btn_control {
+  flex: 1;
+  max-width: 225px;
+  font-weight: 500;
+}
+.btn_sendFeedback {
+  background-color: #b9f8c5 !important;
+  border: 2px solid #98d6a3;
 }
 </style>
