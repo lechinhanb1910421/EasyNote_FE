@@ -109,16 +109,20 @@ export const useUserStore = defineStore('user', {
         this.getUserNotes(this.user.email)
       } catch (error) {}
     },
-    async updateUserInfo(firstName, lastName, email) {
+    async updateUserInfo(firstName, lastName, profilePic, email) {
       var payload = {
         firstName: null,
-        lastName: null
+        lastName: null,
+        profilePic: null
       }
       if (firstName != this.user.firstName) {
         payload.firstName = firstName
       }
       if (lastName != this.user.lastName) {
         payload.lastName = lastName
+      }
+      if (profilePic != this.user.profilePic) {
+        payload.profilePic = profilePic
       }
       try {
         await AccountService.updateUserInfo(email, payload)
@@ -153,6 +157,21 @@ export const useUserStore = defineStore('user', {
         }
       })
       return documents
+    },
+    async countAllNotes() {
+      // if (!Object.keys(this.notes.doing).length) {
+      //   await this.getUserNotes(this.user.email)
+      // }
+      let count = this.notes.pending.length
+      count += this.notes.doing.length
+      count += this.notes.done.length
+      return count
+    },
+    async countNotesDone() {
+      // if (!Object.keys(this.notes.done).length) {
+      //   await this.getUserNotes(this.user.email)
+      // }
+      return this.notes.done.length
     }
   }
 })

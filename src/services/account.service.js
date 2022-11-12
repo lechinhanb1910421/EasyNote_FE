@@ -24,6 +24,8 @@ class AccountService {
     return (await this.api.post('/register', payload)).data
   }
   async updateUserInfo(email, payload) {
+    console.log(payload)
+
     return (await this.api.patch(`/${email}`, payload)).data
   }
   async delete(email) {

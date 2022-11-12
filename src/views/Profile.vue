@@ -4,7 +4,8 @@ import AccountService from '@/services/account.service'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import { useUserStore } from '@/stores/user'
-
+import { storage } from '@/services/firebase.config.js'
+import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
 export default {
   components: {
     Header,
@@ -12,19 +13,34 @@ export default {
   },
   data() {
     return {
-      firstName: '',
-      lastName: '',
-      userName: '',
-      userEmail: '',
-      userProPic: '',
+      user: {
+        firstName: '',
+        lastName: '',
+        userName: '',
+        email: '',
+        proPic: ''
+      },
+      errors: {
+        isErr: false,
+        fNameErr: false,
+        lNameErr: false,
+        validUpdate: false
+      },
+      isMainPage: true,
       editedFName: '',
       editedLName: '',
       errorMsg: '',
-      isErr: false,
-      fNameErr: false,
-      lNameErr: false,
-      validUpdate: false,
-      isMainPage: true
+      newImagePreview: '',
+      statistics: {
+        totalNotes: null,
+        totalDone: null,
+        easyScore: null
+      },
+      newImageURL: '',
+      newImageData: '',
+      isImageChanged: false,
+      isUploading: false,
+      uploadProgress: 0
     }
   },
   setup() {
@@ -40,8 +56,8 @@ export default {
         if (token) {
           const token_user = await AccountService.getUser(token)
           if (token_user) {
-            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
-            this.userStore.getUserNotes(token_user.email)
+            await this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+            await this.userStore.getUserNotes(token_user.email)
           } else {
             throw new Error('Can not get user with this token')
           }
@@ -54,32 +70,42 @@ export default {
       }
     },
     getUserInfo() {
-      this.firstName = this.userStore.user.firstName
-      this.lastName = this.userStore.user.lastName
-      this.userName = this.firstName + ' ' + this.lastName
-      this.userEmail = this.userStore.user.email
-      this.userProPic = this.userStore.user.profilePic
-      this.editedFName = this.firstName
-      this.editedLName = this.lastName
+      this.user.firstName = this.userStore.user.firstName
+      this.user.lastName = this.userStore.user.lastName
+      this.user.fullname = this.user.firstName + ' ' + this.user.lastName
+      this.user.email = this.userStore.user.email
+      this.user.proPic = this.userStore.user.profilePic
+      this.editedFName = this.user.firstName
+      this.editedLName = this.user.lastName
+      this.getStatistic()
+    },
+    getStatistic() {
+      var count = this.userStore.notes.done.length
+      this.statistics.totalDone = count
+      count += this.userStore.notes.doing.length
+      count += this.userStore.notes.pending.length
+      this.statistics.totalNotes = count
+      this.statistics.easyScore = this.statistics.totalDone / this.statistics.totalNotes
+      this.statistics.easyScore = Math.round(this.statistics.easyScore * 100) / 100
     },
     discardEdit() {
-      this.editedFName = this.firstName
-      this.editedLName = this.lastName
+      this.editedFName = this.user.firstName
+      this.editedLName = this.user.lastName
     },
     showErrBox(error) {
       this.errorMsg = error
-      this.isErr = true
+      this.errors.isErr = true
     },
     hideErrBox() {
       this.errorMsg = ''
-      this.isErr = false
+      this.errors.isErr = false
     },
     async updateInfo() {
-      if (this.fNameErr || this.lNameErr || this.isErr) {
+      if (this.errors.fNameErr || this.errors.lNameErr || this.isErr) {
         return
       }
       try {
-        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, this.userEmail)
+        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, this.user.email)
         await this.getUser()
         this.getUserInfo()
         this.$router.go({ name: 'profile' })
@@ -90,39 +116,85 @@ export default {
     },
     showMainModal() {
       this.isMainPage = true
+    },
+    async previewImage(event) {
+      this.newImageData = event.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(this.newImageData)
+      reader.onload = (e) => {
+        this.newImagePreview = e.target.result
+      }
+      this.isImageChanged = true
+    },
+    async uploadImage() {
+      const newImageName = Math.floor(Date.now() / 1000) + this.newImageData.name
+      const storageRef = ref(storage, `userImages/${newImageName}`)
+      const uploadTask = uploadBytesResumable(storageRef, this.newImageData)
+      this.isUploading = true
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          this.uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused')
+              break
+          }
+        },
+        (error) => {
+          console.log(error)
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            this.newImageLink = downloadURL
+            await this.userStore.updateUserInfo(this.editedFName, this.editedLName, downloadURL, this.user.email)
+            this.informUploaded()
+            this.newImageData = ''
+            this.isImageChanged = false
+            this.isUploading = false
+          })
+        }
+      )
+    },
+    informUploaded() {
+      const message = '<span> <i class="fa-regular fa-circle-check"></i> Profile Image Uploaded </span>'
+      this.$toast.success(message, {
+        duration: 3000
+      })
     }
   },
+
   async created() {
     await this.getUser()
     this.getUserInfo()
   },
 
   watch: {
-    editedFName: async function (message) {
+    editedFName: async function (message, oldMess) {
       if (message == null || message == '') {
         this.showErrBox('First Name can not be empty')
-        this.fNameErr = true
+        this.errors.fNameErr = true
       } else {
-        if (message != this.firstName) {
-          this.validUpdate = true
+        if (message != this.user.firstName) {
+          this.errors.validUpdate = true
         } else {
-          this.validUpdate = false
+          this.errors.validUpdate = false
         }
-        this.fNameErr = false
+        this.errors.fNameErr = false
         this.hideErrBox()
       }
     },
     editedLName: async function (message) {
       if (message == null || message == '') {
         this.showErrBox('Last Name can not be empty')
-        this.lNameErr = true
+        this.errors.lNameErr = true
       } else {
-        if (message != this.lastName) {
-          this.validUpdate = true
+        if (message != this.user.lastName) {
+          this.errors.validUpdate = true
         } else {
-          this.validUpdate = false
+          this.errors.validUpdate = false
         }
-        this.lNameErr = false
+        this.errors.lNameErr = false
         this.hideErrBox()
       }
     }
@@ -132,14 +204,14 @@ export default {
 <template>
   <Header></Header>
   <div class="container">
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12 mt-3 mb-3 d-flex profile_info">
         <div class="profile_pic">
-          <img :src="userProPic" alt="..." height="150" width="150" class="rounded-circle" />
+          <img :src="user.proPic" alt="..." height="150" width="150" class="rounded-circle" />
         </div>
         <div class="general_info">
-          <p class="prof_userName">{{ userName }}</p>
-          <p class="prof_userEmail">{{ userEmail }}</p>
+          <p class="prof_userName">{{ user.fullname }}</p>
+          <p class="prof_userEmail">{{ user.email }}</p>
         </div>
         <div class="edit_ctn">
           <button class="btn btn_editProfile" type="button" data-bs-toggle="modal" data-bs-target="#edit_profile">
@@ -148,22 +220,97 @@ export default {
           </button>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div id="" class="col-4">
-        <div class="total_notes"></div>
+    </div> -->
+    <div class="row mt-4">
+      <div class="col-6">
+        <div class="personal_info profile_info_ctn">
+          <div class="row">
+            <span class="profile_info_title">Personal Informations</span>
+          </div>
+          <div class="row mt-5 mb-3" style="width: 90%; margin: auto">
+            <div class="col-4 d-block">
+              <img v-if="!newImagePreview" class="avatar_edit" :src="user.proPic" alt="..." />
+              <img v-if="newImagePreview" class="avatar_edit" :src="newImagePreview" alt="..." />
+              <!-- <img v-if="newImagePreview" class="avatar_edit" :src="newImageLink" alt="..." height="200" width="200" /> -->
+              <div v-if="!isImageChanged">
+                <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
+                <input id="files" class="d-none" type="file" @change="previewImage" />
+              </div>
+              <div v-if="isImageChanged">
+                <button type="button" class="btn btn_upImage" @click="uploadImage">Upload Image</button>
+              </div>
+              <!-- <button type="button" @click="uploadImage">upload image</button> -->
+            </div>
+            <div class="col-8">
+              <div class="form-floating mb-2 row">
+                <input type="email" class="form-control" v-model="user.email" id="email" disabled />
+                <label for="email">Email address</label>
+              </div>
+              <div class="form-floating mb-2 row">
+                <input
+                  type="text"
+                  name="firstName"
+                  v-model="editedFName"
+                  id="fname"
+                  class="form-control shadow-none"
+                  :class="{ inputError: errors.fNameErr }"
+                  placeholder="First Name"
+                  autocomplete="nope" />
+                <label for="firstName">First Name</label>
+              </div>
+
+              <div class="form-floating row mb-2">
+                <input
+                  type="text"
+                  name="lastName"
+                  v-model="editedLName"
+                  id="lname"
+                  :class="{ inputError: errors.lNameErr }"
+                  class="form-control shadow-none outline"
+                  placeholder="Last Name"
+                  autocomplete="nope" />
+                <label for="lastName" class="">Last Name</label>
+              </div>
+              <div class="row mb-3" v-if="errors.isErr">
+                <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
+                  {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex justify-content-center">
+            <div class="col-10">
+              <div class="progress" v-if="isUploading">
+                <div
+                  class="progress-bar progress-bar-striped bg-info"
+                  role="progressbar"
+                  aria-label="Default striped example"
+                  :style="{ width: uploadProgress + '%' }"
+                  aria-valuenow="10"
+                  aria-valuemin="0"
+                  aria-valuemax="100"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3 d-flex justify-content-center">
+            <div class="col-10 d-flex justify-content-center">
+              <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate" data-bs-dismiss="modal">
+                Update Information
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="" class="col-4">
-        <div class="total_notes">Show total notes done</div>
-      </div>
-      <div id="" class="col-4">
-        <div class="total_notes">Show total EasyNote score</div>
+      <div class="col-6">
+        <div class="achievement profile_info_ctn">
+          <span class="profile_info_title">EasyNote Achievements</span>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Modal  Edit Profile info -->
-  <div
+  <!-- <div
     class="modal fade modal-lg"
     id="edit_profile"
     ref="edit_profile"
@@ -181,7 +328,7 @@ export default {
         <div class="modal-body">
           <div class="row">
             <div class="col-4 d-block">
-              <img class="avatar_edit" :src="userProPic" alt="..." />
+              <img class="avatar_edit" :src="user.proPic" alt="..." />
               <div>
                 <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
                 <input id="files" class="d-none" type="file" />
@@ -189,7 +336,7 @@ export default {
             </div>
             <div class="col-8">
               <div class="form-floating mb-2 row">
-                <input type="email" class="form-control" v-model="userEmail" id="email" disabled />
+                <input type="email" class="form-control" v-model="user.email" id="email" disabled />
                 <label for="email">Email address</label>
               </div>
               <div class="form-floating mb-2 row">
@@ -199,7 +346,7 @@ export default {
                   v-model="editedFName"
                   id="fname"
                   class="form-control shadow-none"
-                  :class="{ inputError: fNameErr }"
+                  :class="{ inputError: errors.fNameErr }"
                   placeholder="First Name"
                   autocomplete="nope" />
                 <label for="firstName">First Name</label>
@@ -211,25 +358,17 @@ export default {
                   name="lastName"
                   v-model="editedLName"
                   id="lname"
-                  :class="{ inputError: lNameErr }"
+                  :class="{ inputError: errors.lNameErr }"
                   class="form-control shadow-none outline"
                   placeholder="Last Name"
                   autocomplete="nope" />
                 <label for="lastName" class="">Last Name</label>
               </div>
-              <div class="row mb-3" v-if="isErr">
+              <div class="row mb-3" v-if="errors.isErr">
                 <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
                   {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
               </div>
-              <!-- <div class="row mb-2">
-                <div class="col-6 pe-1">
-                  <button type="button" class="btn btn_danger btn_delAccount">Delete Account</button>
-                </div>
-                <div class="col-6 ps-1">
-                  <button type="button" class="btn btn_danger btn_changePwd" @click="showPassModal">Change Password</button>
-                </div>
-              </div> -->
             </div>
             <div class="col-8" v-if="!isMainPage">
               <div>
@@ -243,7 +382,7 @@ export default {
                 <input type="password" class="form-control" id="passConfirm" />
                 <label for="passConfirm">Comfirm Password</label>
               </div>
-              <div class="row mb-3" v-if="isErr">
+              <div class="row mb-3" v-if="errors.isErr">
                 <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
                   {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -256,19 +395,18 @@ export default {
                   <button type="button" class="btn btn_danger btn_changePwd">Submit and Log Out</button>
                 </div>
               </div>
-              <!-- </form> -->
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn_delAccount" data-bs-dismiss="modal" @click="discardEdit">Discard and Close</button>
-          <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!validUpdate" data-bs-dismiss="modal">
+          <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate" data-bs-dismiss="modal">
             Update Information
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <Footer></Footer>
 </template>
 
@@ -306,11 +444,6 @@ export default {
   right: 20px;
   bottom: 20px;
 }
-.btn_editProfile {
-  width: 160px;
-  font-weight: 500;
-  background-color: rgb(220, 220, 220);
-}
 
 .modal-content {
   width: 650px;
@@ -332,8 +465,8 @@ export default {
   background-color: rgb(240, 240, 240);
 }
 .avatar_edit {
-  aspect-ratio: 1/1;
   width: 150px;
+  aspect-ratio: 1/1;
   border-radius: 50%;
 }
 
@@ -356,38 +489,58 @@ export default {
   border: 2px solid #d65353;
 }
 
-.total_notes {
+.profile_info_ctn {
+  height: 500px;
   margin-left: 10px;
   margin-right: 10px;
+  display: block;
+}
+.personal_info {
+  border-radius: 0.75rem;
+  background-color: #b2e5fb;
+}
+.achievement {
   background-color: #b9f8c5;
-  aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 0.75rem;
+}
+.profile_info_title {
+  text-align: center;
+  width: 400px;
+  margin: auto;
+  padding-top: 20px;
+  font-weight: 500;
+  font-size: 36px;
 }
 .modal-header {
   background-color: #dfd3c3;
 }
-.modal-footer {
+.editProfile_btn {
+  display: flex;
   justify-content: space-around;
-  background-color: #b19c8f;
 }
-.modal-footer button {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  font-weight: 500;
-  max-width: 270px;
-  transition: all 0.3s;
-}
-.modal-footer button:hover {
+.editProfile_btn button:hover {
   transform: scale(1.03);
 }
 .btn_saveChange {
+  padding: 10px;
+  font-weight: 500;
+  width: 400px;
+  border-radius: 0.75rem;
+  transition: all 0.3s;
   background-color: #b9f8c5;
   border: 2px solid #85d193;
 }
 .inputError {
   box-shadow: #ff7878 0 0 3px 3px !important;
+}
+.btn_upImage {
+  margin-top: 10px;
+  font-weight: 500;
+  width: 150px;
+  height: 40px;
+  border-radius: 0.75rem;
+  transition: all 0.3s;
+  background-color: #b9f8c5;
+  border: 2px solid #85d193;
 }
 </style>
