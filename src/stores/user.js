@@ -9,7 +9,8 @@ export const useUserStore = defineStore('user', {
       firstName: null,
       lastName: null,
       email: null,
-      profilePic: null
+      profilePic: null,
+      createDate: null
     },
     notes: {
       pending: [],
@@ -19,11 +20,12 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {},
   actions: {
-    async saveUser(firstName, lastName, email, profilePic) {
+    async saveUser(firstName, lastName, email, profilePic, createDate) {
       this.user.firstName = firstName
       this.user.lastName = lastName
       this.user.email = email
       this.user.profilePic = profilePic
+      this.user.createDate = createDate
     },
     async getUser(token) {
       const token_user = await AccountService.getUser(token)
@@ -31,6 +33,7 @@ export const useUserStore = defineStore('user', {
       this.user.lastName = token_user.lastName
       this.user.email = token_user.email
       this.user.profilePic = token_user.profilePic
+      this.user.createDate = token_user.createDate
     },
     async getUserByEmail(email) {
       try {

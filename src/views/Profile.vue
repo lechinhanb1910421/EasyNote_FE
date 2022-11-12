@@ -6,6 +6,7 @@ import Footer from '@/components/Footer.vue'
 import { useUserStore } from '@/stores/user'
 import { storage } from '@/services/firebase.config.js'
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
+import { toHandlers } from 'vue'
 export default {
   components: {
     Header,
@@ -18,7 +19,8 @@ export default {
         lastName: '',
         userName: '',
         email: '',
-        proPic: ''
+        proPic: '',
+        createDate: ''
       },
       errors: {
         isErr: false,
@@ -34,7 +36,9 @@ export default {
       statistics: {
         totalNotes: null,
         totalDone: null,
-        easyScore: null
+        easyScore: null,
+        totalDays: null,
+        accountCreatedDate: null
       },
       newImageURL: '',
       newImageData: '',
@@ -56,7 +60,7 @@ export default {
         if (token) {
           const token_user = await AccountService.getUser(token)
           if (token_user) {
-            await this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+            await this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic, token_user.createDate)
             await this.userStore.getUserNotes(token_user.email)
           } else {
             throw new Error('Can not get user with this token')
@@ -75,8 +79,10 @@ export default {
       this.user.fullname = this.user.firstName + ' ' + this.user.lastName
       this.user.email = this.userStore.user.email
       this.user.proPic = this.userStore.user.profilePic
+      this.user.createDate = this.userStore.user.createDate
       this.editedFName = this.user.firstName
       this.editedLName = this.user.lastName
+
       this.getStatistic()
     },
     getStatistic() {
@@ -86,7 +92,12 @@ export default {
       count += this.userStore.notes.pending.length
       this.statistics.totalNotes = count
       this.statistics.easyScore = this.statistics.totalDone / this.statistics.totalNotes
-      this.statistics.easyScore = Math.round(this.statistics.easyScore * 100) / 100
+      this.statistics.easyScore = Math.round(this.statistics.easyScore * 100)
+      const dateBuffer = new Date(this.userStore.user.createDate)
+      this.statistics.accountCreatedDate =
+        dateBuffer.getDate() + ' ' + dateBuffer.toLocaleString('default', { month: 'long' }) + ' ' + dateBuffer.getFullYear()
+      const timeDifference = Math.abs(dateBuffer.getTime() - Date.now())
+      this.statistics.totalDays = Math.ceil(timeDifference / (1000 * 3600 * 24))
     },
     discardEdit() {
       this.editedFName = this.user.firstName
@@ -105,7 +116,7 @@ export default {
         return
       }
       try {
-        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, this.user.email)
+        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, null, this.user.email)
         await this.getUser()
         this.getUserInfo()
         this.$router.go({ name: 'profile' })
@@ -204,44 +215,23 @@ export default {
 <template>
   <Header></Header>
   <div class="container">
-    <!-- <div class="row">
-      <div class="col-12 mt-3 mb-3 d-flex profile_info">
-        <div class="profile_pic">
-          <img :src="user.proPic" alt="..." height="150" width="150" class="rounded-circle" />
-        </div>
-        <div class="general_info">
-          <p class="prof_userName">{{ user.fullname }}</p>
-          <p class="prof_userEmail">{{ user.email }}</p>
-        </div>
-        <div class="edit_ctn">
-          <button class="btn btn_editProfile" type="button" data-bs-toggle="modal" data-bs-target="#edit_profile">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Edit Profile
-          </button>
-        </div>
-      </div>
-    </div> -->
-    <div class="row mt-4">
+    <div class="row mt-5">
+      <!-- Personal information  -->
       <div class="col-6">
         <div class="personal_info profile_info_ctn">
           <div class="row">
             <span class="profile_info_title">Personal Informations</span>
           </div>
-          <div class="row mt-5 mb-3" style="width: 90%; margin: auto">
-            <div class="col-4 d-block">
+          <div class="row mt-5 mb-3" style="width: 98%; margin: auto">
+            <div class="col-5 d-block">
               <img v-if="!newImagePreview" class="avatar_edit" :src="user.proPic" alt="..." />
               <img v-if="newImagePreview" class="avatar_edit" :src="newImagePreview" alt="..." />
-              <!-- <img v-if="newImagePreview" class="avatar_edit" :src="newImageLink" alt="..." height="200" width="200" /> -->
-              <div v-if="!isImageChanged">
+              <div class="text-center">
                 <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
                 <input id="files" class="d-none" type="file" @change="previewImage" />
               </div>
-              <div v-if="isImageChanged">
-                <button type="button" class="btn btn_upImage" @click="uploadImage">Upload Image</button>
-              </div>
-              <!-- <button type="button" @click="uploadImage">upload image</button> -->
             </div>
-            <div class="col-8">
+            <div class="col-7">
               <div class="form-floating mb-2 row">
                 <input type="email" class="form-control" v-model="user.email" id="email" disabled />
                 <label for="email">Email address</label>
@@ -276,10 +266,18 @@ export default {
                   {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
               </div>
+              <div class="row">
+                <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate">Update Information</button>
+              </div>
             </div>
           </div>
-          <div class="row d-flex justify-content-center">
-            <div class="col-10">
+          <div class="row d-flex justify-content-center align-items-center" style="width: 98%; margin: auto" v-if="isImageChanged">
+            <div class="col-3">
+              <div>
+                <button type="button" class="btn btn_upImage" @click="uploadImage">Upload</button>
+              </div>
+            </div>
+            <div class="col-9">
               <div class="progress" v-if="isUploading">
                 <div
                   class="progress-bar progress-bar-striped bg-info"
@@ -292,121 +290,66 @@ export default {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <!-- End of Personal information  -->
+
+      <!-- EasyNote achievement -->
+      <div class="col-6">
+        <div class="achievement profile_info_ctn">
+          <div class="row">
+            <span class="profile_info_title">EasyNote Achievements</span>
+          </div>
           <div class="row mt-3 d-flex justify-content-center">
-            <div class="col-10 d-flex justify-content-center">
-              <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate" data-bs-dismiss="modal">
-                Update Information
-              </button>
+            <div class="col-10">
+              <div class="row d-flex align-items-center">
+                <div class="col-5">
+                  <span class="achievement_label"> Total Notes: </span>
+                </div>
+                <div class="col-7">
+                  <span class="achievement_number"> {{ statistics.totalNotes }}</span>
+                </div>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="col-5">
+                  <span class="achievement_label"> Total Notes: </span>
+                </div>
+                <div class="col-7">
+                  <span class="achievement_number"> {{ statistics.totalDone }}</span>
+                </div>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="col-5">
+                  <span class="achievement_label" style="font-size: 24px"> EasyNote Score: </span>
+                </div>
+                <div class="col-7">
+                  <span class="achievement_number"> {{ statistics.easyScore }}</span>
+                </div>
+              </div>
+              <div class="row mb-1 d-flex align-items-center">
+                <div class="col-6">
+                  <span class="achievement_label"> Total Active Days: </span>
+                </div>
+                <div class="col-5">
+                  <span class="achievement_number"> {{ statistics.totalDays }}</span>
+                </div>
+              </div>
+              <div class="row mb-1 d-flex align-items-center">
+                <div class="col-5">
+                  <span class="achievement_label"> Created Day: </span>
+                </div>
+                <div class="col-7">
+                  <span class="achievement_date"> {{ statistics.accountCreatedDate }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="achievement profile_info_ctn">
-          <span class="profile_info_title">EasyNote Achievements</span>
-        </div>
-      </div>
+      <!-- End of EasyNote achievement -->
     </div>
   </div>
 
-  <!-- Modal  Edit Profile info -->
-  <!-- <div
-    class="modal fade modal-lg"
-    id="edit_profile"
-    ref="edit_profile"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Profile Information</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="discardEdit"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-4 d-block">
-              <img class="avatar_edit" :src="user.proPic" alt="..." />
-              <div>
-                <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
-                <input id="files" class="d-none" type="file" />
-              </div>
-            </div>
-            <div class="col-8">
-              <div class="form-floating mb-2 row">
-                <input type="email" class="form-control" v-model="user.email" id="email" disabled />
-                <label for="email">Email address</label>
-              </div>
-              <div class="form-floating mb-2 row">
-                <input
-                  type="text"
-                  name="firstName"
-                  v-model="editedFName"
-                  id="fname"
-                  class="form-control shadow-none"
-                  :class="{ inputError: errors.fNameErr }"
-                  placeholder="First Name"
-                  autocomplete="nope" />
-                <label for="firstName">First Name</label>
-              </div>
-
-              <div class="form-floating row mb-2">
-                <input
-                  type="text"
-                  name="lastName"
-                  v-model="editedLName"
-                  id="lname"
-                  :class="{ inputError: errors.lNameErr }"
-                  class="form-control shadow-none outline"
-                  placeholder="Last Name"
-                  autocomplete="nope" />
-                <label for="lastName" class="">Last Name</label>
-              </div>
-              <div class="row mb-3" v-if="errors.isErr">
-                <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
-                  {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              </div>
-            </div>
-            <div class="col-8" v-if="!isMainPage">
-              <div>
-                <h5>Change EasyNote Password</h5>
-              </div>
-              <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="changePass" />
-                <label for="changePass">New Password</label>
-              </div>
-              <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="passConfirm" />
-                <label for="passConfirm">Comfirm Password</label>
-              </div>
-              <div class="row mb-3" v-if="errors.isErr">
-                <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert" style="width: 95%">
-                  {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-              </div>
-              <div class="row mb-2">
-                <div class="col-6 pe-1">
-                  <button type="button" class="btn btn_danger btn_delAccount" @click="showMainModal">Discard Change</button>
-                </div>
-                <div class="col-6 ps-1">
-                  <button type="button" class="btn btn_danger btn_changePwd">Submit and Log Out</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn_delAccount" data-bs-dismiss="modal" @click="discardEdit">Discard and Close</button>
-          <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate" data-bs-dismiss="modal">
-            Update Information
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
   <Footer></Footer>
 </template>
 
@@ -414,46 +357,7 @@ export default {
 .container {
   min-height: 100vh;
 }
-.profile_info {
-  margin: auto;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 20px 20px 0px;
-  background-color: #fffcf2;
-  border-radius: 0.75rem;
-  box-shadow: rgb(0 0 0 / 20%) 3px 3px 8px 0;
-}
 
-.general_info {
-  margin-left: 20px;
-}
-.prof_userName {
-  margin: 0;
-  font-size: 36px;
-  font-weight: bold;
-}
-.prof_userEmail {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-}
-.edit_ctn {
-  display: block;
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-}
-
-.modal-content {
-  width: 650px;
-  height: 400px;
-  margin: auto;
-  background-color: #f8ede3;
-}
-.modal-body {
-  margin: 20px;
-}
 .btn_avatar {
   margin-top: 10px;
   width: 150px;
@@ -465,35 +369,20 @@ export default {
   background-color: rgb(240, 240, 240);
 }
 .avatar_edit {
-  width: 150px;
+  width: 200px;
   aspect-ratio: 1/1;
   border-radius: 50%;
-}
-
-.btn_danger {
-  width: 100%;
-  border-radius: 0.75rem;
-  box-shadow: rgb(0 0 0 / 20%) 2px 2px 7px 0;
-  transition: all 0.3s;
-}
-.btn_danger:hover {
-  transform: scale(1.03);
-}
-.btn_changePwd {
-  background-color: #b2e5fb;
-  border: 2px solid #93cae1;
-}
-
-.btn_delAccount {
-  background-color: #ff7878;
-  border: 2px solid #d65353;
 }
 
 .profile_info_ctn {
   height: 500px;
   margin-left: 10px;
   margin-right: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
   display: block;
+  border: 3px solid rgb(0 0 0 / 20%);
+  box-shadow: rgb(0 0 0 / 20%) 4px 4px 8px 0;
 }
 .personal_info {
   border-radius: 0.75rem;
@@ -503,23 +392,26 @@ export default {
   background-color: #b9f8c5;
   border-radius: 0.75rem;
 }
+.achievement_label {
+  font-size: 26px;
+  font-weight: 700;
+}
+.achievement_number {
+  padding: 0px;
+  font-size: 45px;
+  font-weight: 700;
+}
+.achievement_date {
+  font-size: 30px;
+  font-weight: 700;
+}
 .profile_info_title {
   text-align: center;
-  width: 400px;
+  width: 600px;
   margin: auto;
   padding-top: 20px;
-  font-weight: 500;
-  font-size: 36px;
-}
-.modal-header {
-  background-color: #dfd3c3;
-}
-.editProfile_btn {
-  display: flex;
-  justify-content: space-around;
-}
-.editProfile_btn button:hover {
-  transform: scale(1.03);
+  font-weight: 700;
+  font-size: 40px;
 }
 .btn_saveChange {
   padding: 10px;
@@ -534,9 +426,8 @@ export default {
   box-shadow: #ff7878 0 0 3px 3px !important;
 }
 .btn_upImage {
-  margin-top: 10px;
   font-weight: 500;
-  width: 150px;
+  width: 130px;
   height: 40px;
   border-radius: 0.75rem;
   transition: all 0.3s;
