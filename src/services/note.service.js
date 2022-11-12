@@ -12,11 +12,7 @@ class NoteService {
     return (await this.api.get('/', { params: { email: email } })).data
   }
   async updateNote(payload) {
-    if (payload.description) {
-      return (await this.api.put(`/${payload.id}`, { description: payload.description })).data
-    } else if (payload.state) {
-      return (await this.api.put(`/${payload.id}`, { state: payload.state })).data
-    }
+    return (await this.api.put(`/${payload.id}`, payload)).data
   }
   async deleteNote(id) {
     return (await this.api.delete(`/${id}`)).data

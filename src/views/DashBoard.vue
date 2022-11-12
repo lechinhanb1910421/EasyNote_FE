@@ -54,7 +54,6 @@ export default {
         router.push('/login')
       }
     },
-    showNote(payload) {},
 
     showEditNoteModal(payload) {
       this.detailTitle = payload.title
@@ -64,10 +63,15 @@ export default {
 
       $(this.$refs.editNoteModal).modal('show')
     },
-    async noteChanged(note) {
-      const payload = { id: this.editNoteId, description: note }
+    async noteChanged(value) {
+      let payload = { id: this.editNoteId, title: null, description: null }
+      if (value.title) {
+        payload.title = value.title
+      }
+      if (value.description) {
+        payload.description = value.description
+      }
       const result = await this.userStore.editNote(payload)
-
       try {
         if (result.message) {
           this.detailTitle = result.note.title

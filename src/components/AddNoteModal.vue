@@ -69,7 +69,7 @@ export default {
             placeholder="Example Title"
             aria-label="addNote_title"
             aria-describedby="addNote_title"
-            maxlength="37"
+            maxlength="36"
             v-model="noteTitle" />
         </div>
 

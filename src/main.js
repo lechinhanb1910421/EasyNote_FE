@@ -9,7 +9,9 @@ import router from './routers/index'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Toaster from '@meforma/vue-toaster'
+
 import vClickOutside from 'click-outside-vue3'
+
 const pinia = createPinia()
 
 createApp(App).use(VueAxios, axios).use(pinia).use(router).use(Toaster).use(vClickOutside).mount('#app')
