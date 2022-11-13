@@ -6,7 +6,7 @@ import EditPasswordModal from '@/components/EditPasswordModal.vue'
 import DeleteAccountModal from '@/components/DeleteAccountModal.vue'
 
 export default {
-  props: ['isSearch', 'isAdmin'],
+  props: ['isSearch', 'userRole'],
   emits: {
     noteContent: null,
     showNote: null
@@ -43,6 +43,7 @@ export default {
   methods: {
     async logout() {
       localStorage.removeItem('auth_token')
+      localStorage.removeItem('role')
       this.userStore.logout()
       router.push('/login')
     },
@@ -160,17 +161,9 @@ export default {
       </button>
       <div class="position-relative">
         <div class="d-flex">
-          <div v-if="isAdmin">
-            <router-link to="/admin">
-              <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
-            </router-link>
-          </div>
-          <div v-if="!isAdmin">
-            <router-link to="/">
-              <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
-            </router-link>
-          </div>
-
+          <router-link to="/">
+            <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
+          </router-link>
           <input
             class="form-control me-2 empty header_search"
             type="search"
@@ -231,6 +224,16 @@ export default {
                         <span class="profile_userEmail">{{ userStore.user.email }}</span>
                       </div>
                     </button>
+                  </li>
+                  <li v-if="userRole == 'admin'">
+                    <router-link to="/admin">
+                      <button class="dropdown-item profile_btn" type="button">
+                        <span class="icon_cover">
+                          <i class="fa-solid fa-user-tie profile_icon"></i>
+                        </span>
+                        <span class="profile_span">Admin Page </span>
+                      </button>
+                    </router-link>
                   </li>
                   <li>
                     <button class="dropdown-item profile_btn" type="button" @click.stop="toggleSetting">

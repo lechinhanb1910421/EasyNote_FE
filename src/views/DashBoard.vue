@@ -31,21 +31,23 @@ export default {
       editNoteId: '',
       editNoteIndex: '',
       nextState: '',
-      noteState: ''
+      noteState: '',
+      userRole: ''
     }
   },
   methods: {
     async getUser() {
       const token = localStorage.getItem('auth_token')
+      const role_token = localStorage.getItem('role')
       try {
         if (token) {
           const token_user = await AccountService.getUser(token)
-          if (token_user) {
-            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
-            this.userStore.getUserNotes(token_user.email)
-          } else {
+          if (!token_user) {
             throw new Error('Can not get user with this token')
           }
+          this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+          this.getUserRole(role_token)
+          this.userStore.getUserNotes(token_user.email)
         } else {
           throw new Error('There is valid no token')
         }
@@ -54,7 +56,19 @@ export default {
         router.push('/login')
       }
     },
-
+    async getUserRole(role_token) {
+      try {
+        const result = await AccountService.getUserRole(role_token)
+        if (!result) {
+          throw new Error('Can not get user with this token')
+        }
+        this.userStore.saveUserRole(result.role)
+        this.userRole = result.role
+      } catch (error) {
+        console.log(error)
+        router.push('/login')
+      }
+    },
     showEditNoteModal(payload) {
       this.detailTitle = payload.title
       this.detailDescrip = payload.description
@@ -124,7 +138,7 @@ export default {
 }
 </script>
 <template>
-  <Header @show-note="showEditNoteModal" :isSearch="true" :isAdmin="false" ></Header>
+  <Header @show-note="showEditNoteModal" :is-search="true" :user-role="userRole"></Header>
   <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn">

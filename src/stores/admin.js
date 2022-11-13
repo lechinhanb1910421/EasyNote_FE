@@ -13,11 +13,11 @@ export const adminStorage = defineStore('admin', {
       createDate: null
     },
     statistic: {
-      totalNote: '',
-      totalAccount: '',
-      totalContact
+      totalNotes: 'null',
+      totalAccounts: 'null',
+      totalFeedbacks: 'null'
     },
-    contacts: {
+    feedbacks: {
       anonymous: [],
       named: []
     }
@@ -31,13 +31,32 @@ export const adminStorage = defineStore('admin', {
       this.admin.profilePic = profilePic
       this.admin.createDate = createDate
     },
-    async getAdmin(token) {
-      const token_admin = await AccountService.getUser(token)
-      this.admin.firstName = token_admin.firstName
-      this.admin.lastName = token_admin.lastName
-      this.admin.email = token_admin.email
-      this.admin.profilePic = token_admin.profilePic
-      this.admin.createDate = token_admin.createDate
+    getAllStatistics() {
+      const feedbackPromise = new Promise(async (resolve) => {
+        const feedbacks = await FeedbackService.getAllFeedbacks()
+        this.statistic.totalFeedbacks = feedbacks.length
+        resolve(feedbacks)
+      })
+      const accountPromise = new Promise(async (resolve) => {
+        const accounts = await AccountService.getAllAccounts()
+        this.statistic.totalAccounts = accounts.length
+        resolve()
+      })
+      const notesPromise = new Promise(async (resolve) => {
+        const notes = await NoteService.getAllNotes()
+        this.statistic.totalNotes = notes.length
+        resolve()
+      })
+
+      feedbackPromise.then((feedbacks) => {
+        feedbacks.forEach((feedback) => {
+          if (feedback.email == 'anonymous@email.com') {
+            this.feedbacks.anonymous.push(feedback)
+          } else {
+            this.feedbacks.named.push(feedback)
+          }
+        })
+      })
     }
   }
 })

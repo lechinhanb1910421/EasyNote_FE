@@ -10,7 +10,8 @@ export const userStorage = defineStore('user', {
       lastName: null,
       email: null,
       profilePic: null,
-      createDate: null
+      createDate: null,
+      role: ''
     },
     notes: {
       pending: [],
@@ -26,6 +27,9 @@ export const userStorage = defineStore('user', {
       this.user.email = email
       this.user.profilePic = profilePic
       this.user.createDate = createDate
+    },
+    async saveUserRole(role) {
+      this.user.role = role
     },
     async getUser(token) {
       const token_user = await AccountService.getUser(token)

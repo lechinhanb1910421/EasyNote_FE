@@ -45,24 +45,13 @@ export default {
         })
         if (result.message === 'Logged In') {
           localStorage.setItem('auth_token', result.token)
-          localStorage.setItem('role_token', result.role)
-          if (result.role === 'normal') {
-            setTimeout(() => {
-              router.push('/')
-            }, 300)
-          } else if (result.role === 'admin') {
-            setTimeout(() => {
-              router.push('/admin')
-            }, 300)
-          } else {
-            router.push('/login')
-          }
+          localStorage.setItem('role', result.role)
+          router.push('/')
         } else throw error
       } catch (error) {
         if (error.response) {
           this.showErrorBox(error.response.data.message)
         }
-        console.log(error)
       }
     },
     changeEmail() {

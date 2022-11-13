@@ -43,7 +43,8 @@ export default {
       newImageData: '',
       isImageChanged: false,
       isUploading: false,
-      uploadProgress: 0
+      uploadProgress: 0,
+      userRole: ''
     }
   },
   setup() {
@@ -55,6 +56,7 @@ export default {
   methods: {
     async getUser() {
       const token = localStorage.getItem('auth_token')
+      this.userRole = localStorage.getItem('role') ?? 'normal'
       try {
         if (token) {
           const token_user = await AccountService.getUser(token)
@@ -218,7 +220,7 @@ export default {
 }
 </script>
 <template>
-  <Header :isSearch="false" :isAdmin="false"></Header>
+  <Header :isSearch="false" :user-role="userRole"></Header>
   <div class="container">
     <div class="row mt-5">
       <!-- Personal information  -->

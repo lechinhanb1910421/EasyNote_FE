@@ -13,9 +13,10 @@ class AccountService {
     return (await this.api.post('/login', loginInfo)).data
   }
   async getUser(token) {
-    try {
-      return (await this.api.get('/user', { params: { auth_token: token } })).data
-    } catch (error) {}
+    return (await this.api.get('/user', { params: { auth_token: token } })).data
+  }
+  async getUserRole(token) {
+    return (await this.api.get('/role', { params: { role: token } })).data
   }
   async getUserByEmail(email) {
     return (await this.api.get('/', { params: { email: email } })).data
