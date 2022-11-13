@@ -23,12 +23,14 @@ export default {
       this.noteDescrip = ''
     },
     addNote() {
-      if (this.noteTitle == null || this.noteTitle == '') {
+      var title = this.noteTitle
+      var desc = this.noteDescrip
+      if (this.noteTitle.replace(/[\s]+/g, '') == '') {
         this.errorMsg = 'Title can not be null'
         this.is_error = true
         return
       }
-      if (this.noteDescrip == null || this.noteDescrip == '') {
+      if (this.noteDescrip.replace(/[\s]+/g, '') == '') {
         this.errorMsg = 'Description can not be null'
         this.is_error = true
         return
@@ -36,7 +38,7 @@ export default {
       this.errorMsg = ''
       this.is_error = false
       try {
-        this.noteStore.addNote(this.noteTitle, this.noteDescrip)
+        this.noteStore.addNote(title.replace(/[\s]+/g, ' '), desc.replace(/[\n]+/g, '\n'))
         this.$emit('closeModal', 'added')
         this.noteTitle = ''
         this.noteDescrip = ''
@@ -47,7 +49,16 @@ export default {
       }
     }
   },
-  updated() {}
+  watch: {
+    noteTitle: function () {
+      this.errorMsg = ''
+      this.is_error = false
+    },
+    noteDescrip: function () {
+      this.errorMsg = ''
+      this.is_error = false
+    }
+  }
 }
 </script>
 <template>
@@ -75,13 +86,12 @@ export default {
 
         <div class="mb-3">
           <label for="addNote_descrip" class="form-label ms-2 addNote_labels">Detail Description:</label>
-          <textarea class="form-control addNote_inputs" id="addNote_descrip" rows="9" v-model.lazy="noteDescrip"></textarea>
+          <textarea class="form-control addNote_inputs" id="addNote_descrip" rows="9" v-model="noteDescrip"></textarea>
         </div>
 
         <div id="error_box" class="mb-3" v-if="is_error">
           <div class="alert alert-danger alert-dismissible fade show m-auto" role="alert">
             {{ errorMsg }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         </div>
       </div>

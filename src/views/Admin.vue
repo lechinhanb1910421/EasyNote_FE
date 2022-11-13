@@ -64,14 +64,23 @@ export default {
           <div class="row mb-4">
             <span class="container_title">App Statistics</span>
           </div>
-          <div class="row px-3 mb-3">
-            <h5>Total notes: {{ adminStore.statistic.totalNotes }}</h5>
+          <div class="row mb-2">
+            <div class="d-flex align-items-center justify-content-center">
+              <span class="statistic_text"> Total notes: </span>
+              <span class="statistic_number"> {{ adminStore.statistic.totalNotes }}</span>
+            </div>
           </div>
-          <div class="row px-3 mb-3">
-            <h5>Total accounts: {{ adminStore.statistic.totalAccounts }}</h5>
+          <div class="row mb-2">
+            <div class="d-flex align-items-center justify-content-center">
+              <span class="statistic_text"> Total Accounts: </span>
+              <span class="statistic_number"> {{ adminStore.statistic.totalAccounts }}</span>
+            </div>
           </div>
-          <div class="row px-3 mb-3">
-            <h5>Total feedbacks: {{ adminStore.statistic.totalFeedbacks }}</h5>
+          <div class="row mb-3">
+            <div class="d-flex align-items-center justify-content-center">
+              <span class="statistic_text"> Total Feedbacks: </span>
+              <span class="statistic_number"> {{ adminStore.statistic.totalFeedbacks }}</span>
+            </div>
           </div>
         </section>
       </div>
@@ -151,11 +160,20 @@ export default {
   </div>
   <Footer></Footer>
 </template>
-<style>
+<style scoped>
 .statistics_ctn {
   height: 630px;
   background-color: #b2e5fb !important;
   border-radius: 0.75rem;
+}
+.statistic_text {
+  font-size: 26px;
+  font-weight: 500;
+}
+.statistic_number {
+  margin-left: 20px;
+  font-weight: bold;
+  font-size: 60px;
 }
 .feedbacks_section {
   height: 630px;

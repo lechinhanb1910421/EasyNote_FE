@@ -79,6 +79,7 @@ export default {
         })
         if (result.message === 'Logged In') {
           localStorage.setItem('auth_token', result.token)
+          localStorage.setItem('role', result.role)
           setTimeout(() => {
             router.push('/')
           }, 200)
