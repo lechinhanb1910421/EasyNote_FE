@@ -1,12 +1,12 @@
 import AccountService from '@/services/account.service'
 import router from '@/routers'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 export default {
   emits: {
     childCall: null
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }
@@ -45,9 +45,18 @@ export default {
         })
         if (result.message === 'Logged In') {
           localStorage.setItem('auth_token', result.token)
-          setTimeout(() => {
-            router.push('/')
-          }, 200)
+          localStorage.setItem('role_token', result.role)
+          if (result.role === 'normal') {
+            setTimeout(() => {
+              router.push('/')
+            }, 300)
+          } else if (result.role === 'admin') {
+            setTimeout(() => {
+              router.push('/admin')
+            }, 300)
+          } else {
+            router.push('/login')
+          }
         } else throw error
       } catch (error) {
         if (error.response) {

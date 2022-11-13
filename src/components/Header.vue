@@ -1,11 +1,12 @@
 <script>
 import axios from 'axios'
 import router from '@/routers'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 import EditPasswordModal from '@/components/EditPasswordModal.vue'
 import DeleteAccountModal from '@/components/DeleteAccountModal.vue'
 
 export default {
+  props: ['isSearch', 'isAdmin'],
   emits: {
     noteContent: null,
     showNote: null
@@ -15,7 +16,7 @@ export default {
     DeleteAccountModal
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }
@@ -108,6 +109,9 @@ export default {
         this.isSearching = false
         return
       }
+      if (!this.isSearch) {
+        return
+      }
       this.searchedNotes = []
       this.isSearching = true
       try {
@@ -156,9 +160,17 @@ export default {
       </button>
       <div class="position-relative">
         <div class="d-flex">
-          <router-link to="/">
-            <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
-          </router-link>
+          <div v-if="isAdmin">
+            <router-link to="/admin">
+              <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
+            </router-link>
+          </div>
+          <div v-if="!isAdmin">
+            <router-link to="/">
+              <img src="src\assets\icons\favicon.png" alt="..." width="36" height="36" class="rounded-circle me-2" />
+            </router-link>
+          </div>
+
           <input
             class="form-control me-2 empty header_search"
             type="search"

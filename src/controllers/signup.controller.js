@@ -1,13 +1,13 @@
 import AccountService from '@/services/account.service'
 import router from '@/routers'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 
 export default {
   emits: {
     accountCreated: null
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }

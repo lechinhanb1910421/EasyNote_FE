@@ -1,7 +1,7 @@
 <script>
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 import AccountService from '@/services/account.service'
 import NotePanel from '@/components/EditNoteModal.vue'
 import AddNotePanel from '@/components/AddNoteModal.vue'
@@ -16,7 +16,7 @@ export default {
     AddNotePanel
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }
@@ -124,7 +124,7 @@ export default {
 }
 </script>
 <template>
-  <Header @show-note="showEditNoteModal"></Header>
+  <Header @show-note="showEditNoteModal" :isSearch="true" :isAdmin="false" ></Header>
   <div class="container text-dark" style="min-height: 100vh">
     <div class="notesPads_Container">
       <div class="noteToDo_ctn notes_ctn">

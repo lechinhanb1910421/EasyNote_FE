@@ -1,14 +1,14 @@
 <script>
 import router from '@/routers'
 import AccountService from '@/services/account.service'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 import Footer from '@/components/Footer.vue'
 export default {
   components:{
     Footer
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
 
     return {
       userStore

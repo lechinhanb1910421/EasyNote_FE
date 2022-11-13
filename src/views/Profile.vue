@@ -3,10 +3,9 @@ import router from '@/routers'
 import AccountService from '@/services/account.service'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 import { storage } from '@/services/firebase.config.js'
 import { ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage'
-import { toHandlers } from 'vue'
 export default {
   components: {
     Header,
@@ -48,7 +47,7 @@ export default {
     }
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }
@@ -116,7 +115,9 @@ export default {
         return
       }
       try {
-        await this.userStore.updateUserInfo(this.editedFName, this.editedLName, null, this.user.email)
+        const newFName = this.editedFName.replace(/\s+/g, ' ')
+        const newLName = this.editedLName.replace(/\s+/g, ' ')
+        await this.userStore.updateUserInfo(newFName, newLName, null, this.user.email)
         await this.getUser()
         this.getUserInfo()
         this.$router.go({ name: 'profile' })
@@ -182,11 +183,13 @@ export default {
 
   watch: {
     editedFName: async function (message, oldMess) {
+      var trimmedMessage = message.replace(/\s+/g, '').toLowerCase()
+      var trimmedFName = this.user.firstName.replace(/\s+/g, '').toLowerCase()
       if (message == null || message == '') {
         this.showErrBox('First Name can not be empty')
         this.errors.fNameErr = true
       } else {
-        if (message != this.user.firstName) {
+        if (trimmedMessage != trimmedFName) {
           this.errors.validUpdate = true
         } else {
           this.errors.validUpdate = false
@@ -196,11 +199,13 @@ export default {
       }
     },
     editedLName: async function (message) {
+      var trimmedMessage = message.replace(/\s+/g, '').toLowerCase()
+      var trimmedLName = this.user.lastName.replace(/\s+/g, '').toLowerCase()
       if (message == null || message == '') {
         this.showErrBox('Last Name can not be empty')
         this.errors.lNameErr = true
       } else {
-        if (message != this.user.lastName) {
+        if (trimmedMessage != trimmedLName) {
           this.errors.validUpdate = true
         } else {
           this.errors.validUpdate = false
@@ -213,7 +218,7 @@ export default {
 }
 </script>
 <template>
-  <Header></Header>
+  <Header :isSearch="false" :isAdmin="false"></Header>
   <div class="container">
     <div class="row mt-5">
       <!-- Personal information  -->
@@ -227,7 +232,7 @@ export default {
               <img v-if="!newImagePreview" class="avatar_edit" :src="user.proPic" alt="..." />
               <img v-if="newImagePreview" class="avatar_edit" :src="newImagePreview" alt="..." />
               <div class="text-center">
-                <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select Image</label>
+                <label for="files" class="btn btn_avatar"><i class="fa-solid fa-camera"></i> Select New Image</label>
                 <input id="files" class="d-none" type="file" @change="previewImage" />
               </div>
             </div>
@@ -266,8 +271,8 @@ export default {
                   {{ errorMsg }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
               </div>
-              <div class="row">
-                <button type="button" class="btn btn_saveChange" @click="updateInfo" :disabled="!errors.validUpdate">Update Information</button>
+              <div class="row mt-3" v-if="errors.validUpdate">
+                <button type="button" class="btn btn_saveChange" @click="updateInfo">Save Changes</button>
               </div>
             </div>
           </div>
@@ -360,12 +365,14 @@ export default {
 
 .btn_avatar {
   margin-top: 10px;
-  width: 150px;
-  border: 2px solid black;
+  width: 200px;
   border-radius: 0.75rem;
-  background-color: rgb(220, 220, 220);
+  background-color: #e5ebb2 !important;
+  border: 2px solid rgb(0 0 0 / 30%);
+  font-weight: 500;
 }
 .btn_avatar:hover {
+  transition: transform 0.3s;
   background-color: rgb(240, 240, 240);
 }
 .avatar_edit {
@@ -414,9 +421,10 @@ export default {
   font-size: 40px;
 }
 .btn_saveChange {
+  margin: auto;
   padding: 10px;
   font-weight: 500;
-  width: 400px;
+  width: 270px;
   border-radius: 0.75rem;
   transition: all 0.3s;
   background-color: #b9f8c5;
@@ -433,5 +441,8 @@ export default {
   transition: all 0.3s;
   background-color: #b9f8c5;
   border: 2px solid #85d193;
+}
+.btn:hover {
+  transform: scale(1.03);
 }
 </style>

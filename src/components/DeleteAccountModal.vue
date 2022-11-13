@@ -1,5 +1,5 @@
 <script>
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 import AccountService from '@/services/account.service'
 
 export default {
@@ -8,7 +8,7 @@ export default {
     accDeleted: null
   },
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }

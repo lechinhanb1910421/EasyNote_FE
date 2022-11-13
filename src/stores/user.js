@@ -3,7 +3,7 @@ import AccountService from '@/services/account.service'
 import NoteService from '@/services/note.service'
 import FeedbackService from '@/services/feedback.service'
 
-export const useUserStore = defineStore('user', {
+export const userStorage = defineStore('user', {
   state: () => ({
     user: {
       firstName: null,

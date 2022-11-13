@@ -1,9 +1,9 @@
 <script>
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 export default {
   emits: { closeModal: null },
   setup() {
-    const noteStore = useUserStore()
+    const noteStore = userStorage()
     return {
       noteStore
     }

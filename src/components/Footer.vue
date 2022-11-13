@@ -8,12 +8,16 @@ export default {}
         <div class="row text-center d-flex justify-content-center pt-5">
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
-              <a href="#!" class="text-white">About us</a>
+              <router-link to="/">
+                <p class="text-white">Home Page</p>
+              </router-link>
             </h6>
           </div>
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
-              <a href="#!" class="text-white">Profile</a>
+              <router-link to="/profile">
+                <p class="text-white">Profile</p>
+              </router-link>
             </h6>
           </div>
           <div class="col-md-2">
@@ -23,7 +27,9 @@ export default {}
           </div>
           <div class="col-md-2">
             <h6 class="text-uppercase font-weight-bold">
-              <a href="#!" class="text-white">Contact</a>
+              <router-link to="/feedback">
+                <p class="text-white">Contact</p>
+              </router-link>
             </h6>
           </div>
         </div>
@@ -32,11 +38,11 @@ export default {}
       <span class="mb-5">
         <div class="row d-flex justify-content-center">
           <div class="col-lg-8 p-4">
-            <p style="font-size: 19px">My TODO is a cost-free website which helps you manage all your tasks ever so effortlessly.</p>
+            <p style="font-size: 19px">Everett EasyNote is a cost-free website which helps you manage all your tasks ever so effortlessly.</p>
           </div>
         </div>
       </span>
-      <section class="text-center mb-3">
+      <section class="text-center mb-3 fs-3">
         <a href="" class="text-white me-4">
           <i class="fab fa-facebook-f"></i>
         </a>
@@ -57,7 +63,7 @@ export default {}
         </a>
       </section>
     </div>
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">© 2022 Copyright: Everett TODO</div>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">© 2022 Copyright: Everett EasyNote</div>
   </footer>
 </template>
 

@@ -4,7 +4,7 @@ import SignUpContainer from '@/components/SignUpContainer.vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import router from '@/routers'
-import { useUserStore } from '@/stores/user'
+import { userStorage } from '@/stores/user'
 export default {
   components: {
     LogInContainer,
@@ -14,7 +14,7 @@ export default {
   },
   emits: ['accountCreated'],
   setup() {
-    const userStore = useUserStore()
+    const userStore = userStorage()
     return {
       userStore
     }
@@ -36,9 +36,7 @@ export default {
       alert(value)
     },
     accountCreated() {
-      console.log('Child call created')
       this.anchor = 'login'
-      // this.userName = payload.account.firstName + ' ' + payload.account.lastName
     }
   },
   created() {
