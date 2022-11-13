@@ -31,6 +31,12 @@ export const adminStorage = defineStore('admin', {
       this.admin.profilePic = profilePic
       this.admin.createDate = createDate
     },
+    stringnifyDate(date) {
+      const daySuffixes = ['st', 'nd', 'rd']
+      const buffer = new Date(date)
+      const res = buffer.toLocaleString('default', { day: 'numeric', month: 'short' }) + ' ' + buffer.getFullYear()
+      return res
+    },
     getAllStatistics() {
       const feedbackPromise = new Promise(async (resolve) => {
         const feedbacks = await FeedbackService.getAllFeedbacks()
@@ -51,8 +57,10 @@ export const adminStorage = defineStore('admin', {
       feedbackPromise.then((feedbacks) => {
         feedbacks.forEach((feedback) => {
           if (feedback.email == 'anonymous@email.com') {
+            feedback.createDate = this.stringnifyDate(feedback.createDate)
             this.feedbacks.anonymous.push(feedback)
           } else {
+            feedback.createDate = this.stringnifyDate(feedback.createDate)
             this.feedbacks.named.push(feedback)
           }
         })
