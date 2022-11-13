@@ -38,6 +38,9 @@ export const adminStorage = defineStore('admin', {
       return res
     },
     getAllStatistics() {
+      this.feedbacks.anonymous = []
+      this.feedbacks.named = []
+
       const feedbackPromise = new Promise(async (resolve) => {
         const feedbacks = await FeedbackService.getAllFeedbacks()
         this.statistic.totalFeedbacks = feedbacks.length
@@ -65,6 +68,12 @@ export const adminStorage = defineStore('admin', {
           }
         })
       })
+    },
+    async deleteFeedback(id) {
+      try {
+        await FeedbackService.deleteFeedback(id)
+        this.getAllStatistics()
+      } catch (error) {}
     }
   }
 })
