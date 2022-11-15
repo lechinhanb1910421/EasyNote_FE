@@ -17,6 +17,9 @@ class NoteService {
   async deleteNote(id) {
     return (await this.api.delete(`/${id}`)).data
   }
+  async deleteUserNotes(email) {
+    return (await this.api.delete('/', { params: { email: email } })).data
+  }
   async addNote(payload) {
     return (await this.api.post('/add', payload)).data
   }

@@ -61,9 +61,16 @@ export default {
         if (token) {
           const token_user = await AccountService.getUser(token)
           if (token_user) {
-            await this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic, token_user.createDate)
-            this.getUserRole(role_token)
+            await this.userStore.saveUser(
+              token_user.firstName,
+              token_user.lastName,
+              token_user.email,
+              token_user.profilePic,
+              token_user.createDate,
+              token_user.role
+            )
             await this.userStore.getUserNotes(token_user.email)
+            this.userRole = this.userStore.user.role
           } else {
             throw new Error('Can not get user with this token')
           }
@@ -75,19 +82,7 @@ export default {
         router.push('/login')
       }
     },
-    async getUserRole(role_token) {
-      try {
-        const result = await AccountService.getUserRole(role_token)
-        if (!result) {
-          throw new Error('Can not get user with this token')
-        }
-        this.userStore.saveUserRole(result.role)
-        this.userRole = result.role
-      } catch (error) {
-        console.log(error)
-        router.push('/login')
-      }
-    },
+
     getUserInfo() {
       this.user.firstName = this.userStore.user.firstName
       this.user.lastName = this.userStore.user.lastName
@@ -245,7 +240,7 @@ export default {
       <div class="col-6">
         <div class="personal_info profile_info_ctn">
           <div class="row">
-            <span class="profile_info_title">Personal Informations</span>
+            <span class="profile_info_title">Personal Information</span>
           </div>
           <div class="row mt-5 mb-3" style="width: 98%; margin: auto">
             <div class="col-5 d-block">

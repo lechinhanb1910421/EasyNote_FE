@@ -38,8 +38,16 @@ export default {
       try {
         if (token) {
           const token_user = await AccountService.getUser(token)
+          console.log(token_user)
           if (token_user) {
-            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
+            this.userStore.saveUser(
+              token_user.firstName,
+              token_user.lastName,
+              token_user.email,
+              token_user.profilePic,
+              token_user.createDate,
+              token_user.role
+            )
           } else {
             throw new Error('Can not get user with this token')
           }

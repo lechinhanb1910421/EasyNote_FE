@@ -48,6 +48,7 @@ export default {
     },
     async deleleAccount() {
       try {
+        await this.userStore.deleteUserNotes(this.userStore.user.email)
         await this.userStore.deleteAccount(this.userStore.user.email)
         this.$emit('accDeleted')
       } catch (error) {}

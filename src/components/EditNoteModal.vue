@@ -25,9 +25,6 @@ export default {
       this.editedNote = this.noteDescrip
       this.isEditting = true
     },
-    endEdit() {
-      this.isEditting = false
-    },
     saveEditText() {
       let payload = {
         title: null,
@@ -49,6 +46,7 @@ export default {
       this.isEditTitle = false
     },
     cancelEdit() {
+      this.isEditTitle = false
       this.isEditting = false
     },
     deleteNote() {

@@ -45,7 +45,6 @@ export default {
         })
         if (result.message === 'Logged In') {
           localStorage.setItem('auth_token', result.token)
-          localStorage.setItem('role', result.role)
           router.push('/')
         } else throw error
       } catch (error) {

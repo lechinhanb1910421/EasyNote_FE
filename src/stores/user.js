@@ -21,12 +21,13 @@ export const userStorage = defineStore('user', {
   }),
   getters: {},
   actions: {
-    async saveUser(firstName, lastName, email, profilePic, createDate) {
+    async saveUser(firstName, lastName, email, profilePic, createDate, role) {
       this.user.firstName = firstName
       this.user.lastName = lastName
       this.user.email = email
       this.user.profilePic = profilePic
       this.user.createDate = createDate
+      this.user.role = role
     },
     async saveUserRole(role) {
       this.user.role = role
@@ -38,6 +39,7 @@ export const userStorage = defineStore('user', {
       this.user.email = token_user.email
       this.user.profilePic = token_user.profilePic
       this.user.createDate = token_user.createDate
+      this.user.role = token_user.role
     },
     async getUserByEmail(email) {
       try {
@@ -141,6 +143,11 @@ export const userStorage = defineStore('user', {
     async deleteAccount(email) {
       try {
         return await AccountService.delete(email)
+      } catch (error) {}
+    },
+    async deleteUserNotes(email) {
+      try {
+        return await NoteService.deleteUserNotes(email)
       } catch (error) {}
     },
     async addFeedback(payload) {

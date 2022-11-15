@@ -4,7 +4,7 @@ import AccountService from '@/services/account.service'
 import { userStorage } from '@/stores/user'
 import Footer from '@/components/Footer.vue'
 export default {
-  components:{
+  components: {
     Footer
   },
   setup() {
@@ -31,8 +31,14 @@ export default {
         if (token) {
           const token_user = await AccountService.getUser(token)
           if (token_user) {
-            this.userStore.saveUser(token_user.firstName, token_user.lastName, token_user.email, token_user.profilePic)
-            this.userStore.getUserNotes(token_user.email)
+            this.userStore.saveUser(
+              token_user.firstName,
+              token_user.lastName,
+              token_user.email,
+              token_user.profilePic,
+              token_user.createDate,
+              token_user.role
+            )
           } else {
             throw new Error('Can not get user with this token')
           }
@@ -75,14 +81,12 @@ export default {
     },
     goHome() {
       router.push({ name: 'home' })
-    },
-    
+    }
   },
   async created() {
     await this.getUser()
     this.email = this.userStore.user.email
     this.isDefaultEmail = true
-    
   },
   watch: {
     selected: function () {
