@@ -184,6 +184,10 @@ export default {
         }
       )
     },
+    cancelImage() {
+      this.newImagePreview = ''
+      this.isImageChanged = false
+    },
     informUploaded() {
       const message = '<span> <i class="fa-regular fa-circle-check"></i> Profile Image Uploaded </span>'
       this.$toast.success(message, {
@@ -295,7 +299,8 @@ export default {
           <div class="row d-flex justify-content-center align-items-center" style="width: 98%; margin: auto" v-if="isImageChanged">
             <div class="col-3">
               <div>
-                <button type="button" class="btn btn_upImage" @click="uploadImage">Upload</button>
+                <button type="button" class="btn btn_upImage btn_green" @click="uploadImage">Upload</button>
+                <button type="button" class="btn btn_upImage btn_red mt-1" @click="cancelImage">Cancel</button>
               </div>
             </div>
             <div class="col-9">
@@ -450,15 +455,22 @@ export default {
   box-shadow: #ff7878 0 0 3px 3px !important;
 }
 .btn_upImage {
+  padding: 2px;
   font-weight: 500;
   width: 130px;
-  height: 40px;
+  height: 35px;
   border-radius: 0.75rem;
   transition: all 0.3s;
-  background-color: #b9f8c5;
-  border: 2px solid #85d193;
 }
 .btn:hover {
   transform: scale(1.03);
+}
+.btn_green {
+  background-color: #b9f8c5;
+  border: 2px solid #85d193;
+}
+.btn_red {
+  background-color: #ff7878;
+  border: 2px solid #e05c5c;
 }
 </style>

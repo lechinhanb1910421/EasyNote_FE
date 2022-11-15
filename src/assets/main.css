@@ -10,7 +10,7 @@ body {
 }
 
 #preloader {
-  background-color: #000;
+  background-color: #fffbc1;
   height: 100vh;
   width: 100%;
   position: fixed;
@@ -30,7 +30,7 @@ body {
   height: 100vh;
   width: 100%;
   top: 0;
-  background-color: #1e2129 !important;
+  background-color: #f8f3e3 !important;
   position: fixed;
   z-index: 100;
   align-items: center;
